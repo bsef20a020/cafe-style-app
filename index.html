@@ -1,0 +1,2205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NOFFELO — Artisan Café & Evening Lounge, Lahore</title>
+  <meta name="description" content="NOFFELO is an artisan café and evening lounge in Lahore. Reserve your table, explore handcrafted coffee and matcha, and enjoy a warm premium atmosphere." />
+  <meta name="robots" content="index,follow,max-image-preview:large" />
+  <meta name="theme-color" content="#2b1f19" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="NOFFELO — Artisan Café & Evening Lounge" />
+  <meta property="og:description" content="Artisan café by day, cozy evening lounge by night. Reserve your table at NOFFELO, Lahore." />
+  <meta property="og:image" content="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1600&q=80" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="NOFFELO — Artisan Café & Evening Lounge" />
+  <meta name="twitter:description" content="Artisan café by day, cozy evening lounge by night. Reserve your table at NOFFELO, Lahore." />
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1600&q=80" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+
+  <!-- Local utility fallback (used if CDN is blocked/offline) -->
+  <link rel="stylesheet" href="./tailwind-fallback.css" />
+
+  <!-- Performance preconnect -->
+  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+  <!-- Warm artisan fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Sora:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CafeOrCoffeeShop",
+      "name": "NOFFELO",
+      "description": "Artisan Café & Evening Lounge",
+      "telephone": "+923085233717",
+      "servesCuisine": ["Coffee", "Matcha", "Pastries"],
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "MM Alam Road",
+        "addressLocality": "Lahore",
+        "addressCountry": "PK"
+      },
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"],
+          "opens": "09:00",
+          "closes": "23:00"
+        }
+      ]
+    }
+  </script>
+  <script>
+    (function loadRuntimeConfig(){
+      const s = document.createElement("script");
+      s.src = "./config.runtime.js";
+      s.defer = true;
+      s.onerror = function(){};
+      document.head.appendChild(s);
+    })();
+  </script>
+
+  <style>
+    :root{
+      --matcha: 168 222 170;
+      --matchaDeep: 92 148 102;
+
+      --coffee: 201 139 92;
+      --coffeeDeep: 136 85 51;
+
+      /* Warm artisan cafe */
+      --cafeBgA: 25 18 15;
+      --cafeBgB: 43 31 25;
+      --cafeCream: 238 224 204;
+      --cafeBrass: 173 113 71;
+
+      /* Night lounge (still warm, less purple) */
+      --loungeBgA: 20 15 13;
+      --loungeBgB: 34 24 20;
+      --loungeVelvet: 224 194 167;
+      --loungeBrass: 194 139 96;
+
+      --A: var(--matcha);
+      --AD: var(--matchaDeep);
+      --BG1: var(--cafeBgA);
+      --BG2: var(--cafeBgB);
+      --HI: var(--cafeCream);
+      --BR: var(--cafeBrass);
+    }
+
+    body[data-drink="matcha"]{ --A: var(--matcha); --AD: var(--matchaDeep); }
+    body[data-drink="coffee"]{ --A: var(--coffee); --AD: var(--coffeeDeep); }
+
+    body[data-venue="cafe"]{
+      --BG1: var(--cafeBgA);
+      --BG2: var(--cafeBgB);
+      --HI: var(--cafeCream);
+      --BR: var(--cafeBrass);
+    }
+    body[data-venue="lounge"]{
+      --BG1: var(--loungeBgA);
+      --BG2: var(--loungeBgB);
+      --HI: var(--loungeVelvet);
+      --BR: var(--loungeBrass);
+    }
+
+    html, body{ height:100%; }
+    section[id]{ scroll-margin-top: 120px; }
+    body{
+      margin:0;
+      overflow-x:hidden;
+      background: rgb(var(--BG1));
+      color: rgb(var(--HI));
+      font-family: Sora, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      scroll-behavior: smooth;
+    }
+    :focus-visible{
+      outline: 2px solid rgba(var(--BR), .72);
+      outline-offset: 2px;
+    }
+    .skipLink{
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+      padding: .55rem .75rem;
+      border-radius: 10px;
+      background: rgb(var(--HI));
+      color: #221914;
+      font-size: 13px;
+      font-weight: 600;
+      transform: translateY(-150%);
+      transition: transform .2s ease;
+    }
+    .skipLink:focus-visible{ transform: translateY(0); }
+    .font-head{ font-family: "Cormorant Garamond", ui-serif, Georgia, serif; font-weight: 600; }
+    .font-ser{ font-family: "Cormorant Garamond", ui-serif, Georgia, serif; }
+
+    body::before{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background:
+        radial-gradient(900px 520px at 12% 14%, rgba(var(--A), .11), transparent 62%),
+        radial-gradient(860px 560px at 84% 18%, rgba(var(--BR), .16), transparent 66%),
+        radial-gradient(900px 640px at 55% 94%, rgba(var(--HI), .10), transparent 65%),
+        linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(var(--BG1),1) 0%, rgba(var(--BG2),1) 100%);
+      background-size: auto, auto, auto, 120px 120px, 120px 120px, auto;
+      filter: saturate(1.02) contrast(1.01);
+    }
+    body::after{
+      content:"";
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+      background: radial-gradient(closest-side at 50% 55%, transparent 52%, rgba(0,0,0,.42) 100%);
+      opacity:.6;
+    }
+    body > *{ position:relative; z-index:1; }
+
+    .glass{
+      background: rgba(43, 31, 25, .52);
+      border: 1px solid rgba(234, 210, 183, .16);
+      backdrop-filter: blur(10px);
+    }
+    .glow{
+      box-shadow:
+        0 0 0 1px rgba(229, 202, 176, .05) inset,
+        0 22px 70px rgba(0,0,0,.42);
+    }
+    .accentBorder{ border-color: rgba(var(--BR), .25) !important; }
+
+    header .glass{
+      background: rgba(37, 27, 22, .78);
+      border-color: rgba(234, 210, 183, .15);
+      box-shadow: 0 14px 40px rgba(0,0,0,.30);
+    }
+    header nav a{
+      font-size: 14px;
+      letter-spacing: .01em;
+      color: rgba(238, 224, 204, .78);
+    }
+    header nav a:hover{ color: rgba(238, 224, 204, .98); }
+    #venueBtn, #drinkBtn{ min-width: 96px; justify-content: center; }
+    .navActions{ display: flex; align-items: center; gap: .5rem; }
+    .mobileMenuBtn{
+      display: none;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      border: 1px solid rgba(234, 210, 183, .18);
+      background: rgba(255,255,255,.04);
+      color: rgba(238,224,204,.9);
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      line-height: 1;
+    }
+    .mobileMenuBtn .bars{
+      width: 18px;
+      height: 14px;
+      position: relative;
+      display: inline-block;
+    }
+    .mobileMenuBtn .bars span{
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      border-radius: 999px;
+      background: currentColor;
+      transition: transform .22s ease, opacity .18s ease, top .22s ease;
+    }
+    .mobileMenuBtn .bars span:nth-child(1){ top: 0; }
+    .mobileMenuBtn .bars span:nth-child(2){ top: 6px; }
+    .mobileMenuBtn .bars span:nth-child(3){ top: 12px; }
+    .mobileMenuBtn.active .bars span:nth-child(1){ top: 6px; transform: rotate(45deg); }
+    .mobileMenuBtn.active .bars span:nth-child(2){ opacity: 0; }
+    .mobileMenuBtn.active .bars span:nth-child(3){ top: 6px; transform: rotate(-45deg); }
+    .mobileMenuBtn:focus-visible{ outline: 2px solid rgba(var(--BR), .55); outline-offset: 2px; }
+    .mobilePanel{
+      margin-top: .55rem;
+      padding: .85rem;
+      border-radius: 16px;
+      border: 1px solid rgba(234, 210, 183, .14);
+      background: rgba(34, 24, 19, .95);
+      box-shadow: 0 12px 34px rgba(0,0,0,.36);
+      display: none;
+    }
+    .mobilePanel.open{ display: block; }
+    .mobileLinks{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .5rem;
+      margin-bottom: .7rem;
+    }
+    .mobileLinks a{
+      border: 1px solid rgba(234, 210, 183, .16);
+      border-radius: 12px;
+      padding: .55rem .65rem;
+      font-size: 13px;
+      color: rgba(238,224,204,.85);
+      background: rgba(255,255,255,.02);
+      text-align: center;
+    }
+    .mobileControls{
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: .5rem;
+      margin-bottom: .6rem;
+    }
+    .mobileCta{
+      display: block;
+      text-align: center;
+      border-radius: 12px;
+      padding: .7rem .8rem;
+      font-size: 14px;
+      font-weight: 600;
+      background: rgb(var(--HI));
+      color: #231b17;
+      border: 1px solid rgba(255,255,255,.22);
+    }
+
+    .brassLine{
+      height: 1px;
+      background: linear-gradient(to right, transparent, rgba(var(--BR), .65), transparent);
+      opacity:.8;
+    }
+
+    .accentBtn{
+      background: rgba(var(--BR), .16);
+      border: 1px solid rgba(var(--BR), .28);
+    }
+    .accentBtn:hover{ background: rgba(var(--BR), .28); }
+
+    .creamBtn{
+      background: rgba(var(--HI), .08);
+      border: 1px solid rgba(var(--HI), .18);
+    }
+    .creamBtn:hover{ background: rgba(var(--HI), .15); }
+
+    .shine{ position:relative; overflow:hidden; }
+    .shine:after{
+      content:"";
+      position:absolute;
+      top:-40%;
+      left:-60%;
+      width:60%;
+      height:200%;
+      transform: rotate(20deg);
+      background: linear-gradient(to right, transparent, rgba(247,229,206,.18), transparent);
+      opacity:0;
+      transition: opacity .25s ease;
+    }
+    .shine:hover:after{ opacity:1; animation: sweep 1.05s ease; }
+    @keyframes sweep{
+      0%{ transform:translateX(0) rotate(20deg); }
+      100%{ transform:translateX(260%) rotate(20deg); }
+    }
+
+    .grain:before{
+      content:"";
+      position:absolute; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity: .12;
+      pointer-events:none;
+      border-radius:inherit;
+    }
+
+    .heroWrap{ position:relative; overflow:hidden; }
+    .heroLayer{ position:absolute; inset:-120px; pointer-events:none; opacity:.95; transform: translateZ(0); }
+    .orb{ position:absolute; width: 560px; height: 560px; border-radius: 999px; filter: blur(30px); opacity:.8; mix-blend-mode: soft-light; }
+    .orb.o1{ left:-160px; top:40px; background: radial-gradient(circle at 30% 30%, rgba(var(--A), .26), transparent 62%); }
+    .orb.o2{ right:-220px; top:40px; width: 700px; height: 700px; background: radial-gradient(circle at 35% 35%, rgba(var(--BR), .34), transparent 62%); opacity:.82; }
+    .orb.o3{ left: 28%; bottom:-320px; width: 980px; height: 980px; background: radial-gradient(circle at 40% 40%, rgba(var(--HI), .16), transparent 62%); opacity:.86; }
+
+    .curtain{ position:absolute; inset:0; pointer-events:none; background: linear-gradient(90deg, rgba(0,0,0,.45), transparent 22%, transparent 78%, rgba(0,0,0,.45)); opacity:.32; }
+    .heroGrid{
+      position:absolute; inset:0;
+      pointer-events:none;
+      background:
+        linear-gradient(to right, rgba(241,222,201,.035) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(241,222,201,.035) 1px, transparent 1px);
+      background-size: 140px 140px;
+      mask-image: radial-gradient(closest-side at 50% 42%, rgba(0,0,0,.9), transparent 70%);
+      opacity:.12;
+    }
+    .heroText h1{
+      max-width: 14ch;
+      font-size: clamp(2.3rem, 5.1vw, 4.9rem);
+      line-height: 1.02 !important;
+      letter-spacing: -0.02em;
+    }
+    .heroText p{
+      max-width: 54ch;
+      color: rgba(238,224,204,.72);
+      line-height: 1.7;
+    }
+    .heroText .mt-10{
+      margin-top: 2.2rem !important;
+      gap: .65rem;
+    }
+    .heroText .mt-10 .glass{
+      background: rgba(57, 40, 31, .45);
+      border-color: rgba(223, 182, 146, .20);
+    }
+
+    .revealLine{ position:relative; display:inline-block; overflow:hidden; vertical-align: bottom; }
+    .revealLine > span{ display:inline-block; transform: translateY(0); will-change: transform; }
+
+    /* 3D canvas */
+    #threeCanvas{ width:100%; height:500px; display:block; }
+
+    .steamWrap{ pointer-events:none; position:absolute; inset:0; overflow:hidden; }
+    .steam{ position:absolute; left:50%; top:30%; width: 330px; height: 360px; transform: translateX(-50%); filter: blur(13px); opacity: .65; mix-blend-mode: screen; }
+    .steam:before, .steam:after{
+      content:""; position:absolute; inset:-60px;
+      background:
+        radial-gradient(closest-side at 35% 65%, rgba(255,255,255,.12), transparent 68%),
+        radial-gradient(closest-side at 62% 42%, rgba(var(--A),.11), transparent 72%),
+        radial-gradient(closest-side at 55% 55%, rgba(var(--BR),.10), transparent 70%);
+      animation: steamFloat 6.2s infinite ease-in-out;
+    }
+    .steam:after{ animation-duration: 7.3s; opacity:.95; transform: scale(1.15); }
+    @keyframes steamFloat{
+      0%{ transform: translateY(34px) translateX(-12px) scale(0.98); opacity:.35; }
+      50%{ transform: translateY(-22px) translateX(12px) scale(1.06); opacity:.78; }
+      100%{ transform: translateY(34px) translateX(-12px) scale(0.98); opacity:.35; }
+    }
+
+    /* menu/gallery cards (keep same) */
+    .imgCard{ border-radius: 18px; overflow: hidden; border: 1px solid rgba(235, 211, 184, .14); background: rgba(255,255,255,.02); }
+    .imgCard img{ width:100%; height: 170px; object-fit: cover; display:block; transform: scale(1.02); transition: transform .45s ease; }
+    .menuCard:hover img, .galleryCard:hover img{ transform: scale(1.07); }
+    .menuCard, .galleryCard{
+      transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+    }
+    .menuCard:hover, .galleryCard:hover{
+      transform: translateY(-4px);
+      border-color: rgba(var(--BR), .34) !important;
+      box-shadow: 0 18px 42px rgba(0,0,0,.26);
+    }
+
+    @media (max-width: 900px){
+      header nav{ display: none !important; }
+      .navActions{ display: none; }
+      .mobileMenuBtn{ display: inline-flex; }
+    }
+
+    body.menu-open, body.modal-open{ overflow: hidden; }
+
+    @media (max-width: 768px){
+      #threeCanvas{ height:390px; }
+      .heroShell{
+        padding: 1.1rem !important;
+        gap: 1.2rem !important;
+      }
+      .heroText h1{
+        font-size: clamp(1.95rem, 10.4vw, 2.55rem);
+        line-height: 1.06 !important;
+        max-width: 100%;
+      }
+      .heroText .mt-6{ margin-top: 1rem !important; }
+      .heroText .mt-5{ margin-top: .8rem !important; }
+      .heroText .mt-10{ margin-top: 1.2rem !important; }
+      .heroCtas{
+        display: grid !important;
+        gap: .65rem !important;
+      }
+      .heroCtas a{
+        width: 100%;
+        text-align: center;
+      }
+      .heroCtas .hoursTag{
+        margin-left: 0 !important;
+        font-size: 12px;
+        text-align: center;
+      }
+      .heroStats{
+        grid-template-columns: 1fr !important;
+        gap: .55rem !important;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce){
+      *, *::before, *::after{
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* WhatsApp */
+    .fab{ position: fixed; right: 18px; bottom: 18px; z-index: 60; }
+    .fab a{
+      display:flex; align-items:center; gap:10px;
+      padding: 12px 14px; border-radius: 18px;
+      background: rgba(var(--BR), .22);
+      border: 1px solid rgba(var(--BR), .35);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 16px 40px rgba(0,0,0,.40), 0 0 70px rgba(var(--BR), .10);
+      color: #fff; font-size: 14px;
+    }
+
+    #cdnError{ display:none; }
+
+    *{
+      scrollbar-width: auto;
+      scrollbar-color: rgba(var(--BR), .72) rgba(0,0,0,.32);
+    }
+    ::-webkit-scrollbar{ width: 13px; }
+    ::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(var(--BR), .86), rgba(var(--BR), .62));
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,.28);
+    }
+    ::-webkit-scrollbar-track{
+      background: rgba(0,0,0,.32);
+      border-radius: 999px;
+    }
+
+    .reserveModal{
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      background: rgba(0,0,0,.62);
+      z-index: 1200;
+    }
+    .reserveModal.open{ display: flex; }
+    .reserveDialog{
+      width: min(560px, 96vw);
+      border-radius: 18px;
+      border: 1px solid rgba(234, 210, 183, .18);
+      background: rgba(43, 31, 25, .98);
+      box-shadow: 0 20px 60px rgba(0,0,0,.42);
+      padding: 1rem;
+    }
+    .modalActions{
+      display: flex;
+      flex-wrap: wrap;
+      gap: .55rem;
+      margin-top: .9rem;
+    }
+    .modalActions button, .modalActions a{
+      border-radius: 10px;
+      border: 1px solid rgba(234, 210, 183, .2);
+      padding: .55rem .8rem;
+      font-size: 13px;
+    }
+    .modalActions .primary{
+      background: rgb(var(--HI));
+      color: #231b17;
+      font-weight: 600;
+    }
+    .modalActions .ghost{
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.88);
+    }
+
+    .cupIcon{ width: 18px; height: 18px; display:inline-block; vertical-align: -3px; }
+  </style>
+</head>
+
+<body data-venue="cafe" data-drink="matcha">
+  <a href="#top" class="skipLink">Skip to content</a>
+
+  <!-- PRELOADER -->
+  <div id="preloader" class="fixed inset-0 z-[999] bg-[#070606] grid place-items-center">
+    <div class="w-[min(620px,92vw)]">
+      <div class="flex items-center justify-between mb-3">
+        <div class="text-xs tracking-[0.45em] text-white/70 font-head">NOFFELO</div>
+        <div id="loadPct" class="text-sm text-white/60 tabular-nums">0%</div>
+      </div>
+      <div class="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+        <div id="loadBar" class="h-full w-0 rounded-full" style="background: rgba(var(--A), .95)"></div>
+      </div>
+      <div class="mt-7 text-4xl md:text-5xl font-ser tracking-tight">
+        <span class="text-white/88">Artisan Café</span>
+        <span class="text-white/28">& Evening Lounge</span>
+      </div>
+      <div class="mt-2 text-white/52 text-sm">
+        Warm espresso theme • cinematic motion • matcha/coffee modes
+      </div>
+
+      <div id="cdnError" class="mt-6 text-sm text-red-300/90">
+        Libraries failed to load (CDN blocked). Page will still open, but animations may not run.
+      </div>
+    </div>
+  </div>
+
+  <!-- NAV (UPDATED ONLY) -->
+  <header class="fixed top-0 left-0 right-0 z-50">
+    <div class="mx-auto max-w-6xl px-4 py-4">
+      <div class="glass glow rounded-2xl px-4 py-3 flex items-center justify-between">
+        <a href="#top" class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-white/5 grid place-items-center accentBorder">✦</div>
+          <div class="leading-tight">
+            <div class="font-head tracking-[0.12em] text-sm">NOFFELO</div>
+            <div id="venueLabel" class="text-[11px] text-white/55">Artisan Café</div>
+          </div>
+        </a>
+
+        <!-- Primary section navigation -->
+        <nav class="hidden md:flex items-center gap-6 text-sm text-white/70" aria-label="Primary">
+          <a class="hover:text-white transition" href="#story">Story</a>
+          <a class="hover:text-white transition" href="#menu">Menu</a>
+          <a class="hover:text-white transition" href="#events">Events</a>
+          <a class="hover:text-white transition" href="#lounge">Lounge</a>
+          <a class="hover:text-white transition" href="#gallery">Gallery</a>
+          <a class="hover:text-white transition" href="#reserve">Reserve</a>
+        </nav>
+
+        <div class="navActions">
+          <button id="venueBtn"
+            class="shine rounded-xl px-3 py-2 text-sm bg-white/5 border border-white/10 hover:bg-white/8 transition">
+            Café
+          </button>
+
+          <!-- drink toggle with cute cup icon -->
+          <button id="drinkBtn"
+            class="shine rounded-xl px-3 py-2 text-sm accentBtn transition flex items-center gap-2">
+            <span id="drinkIcon" aria-hidden="true"></span>
+            <span id="drinkText">Matcha</span>
+          </button>
+
+          <a href="#reserve"
+            class="shine rounded-xl px-3 py-2 text-sm bg-white text-zinc-950 font-semibold hover:opacity-90 transition">
+            Reserve
+          </a>
+        </div>
+        <button id="mobileMenuBtn" class="mobileMenuBtn" aria-expanded="false" aria-controls="mobileNavPanel" aria-label="Open menu">
+          <span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        </button>
+      </div>
+      <div id="mobileNavPanel" class="mobilePanel" aria-hidden="true">
+        <div class="mobileLinks">
+          <a href="#story" data-mobile-link>Story</a>
+          <a href="#menu" data-mobile-link>Menu</a>
+          <a href="#events" data-mobile-link>Events</a>
+          <a href="#lounge" data-mobile-link>Lounge</a>
+          <a href="#gallery" data-mobile-link>Gallery</a>
+          <a href="#reserve" data-mobile-link>Reserve</a>
+        </div>
+        <div class="mobileControls">
+          <button id="venueBtnMobile" class="shine rounded-xl px-3 py-2 text-sm bg-white/5 border border-white/10 transition">Café</button>
+          <button id="drinkBtnMobile" class="shine rounded-xl px-3 py-2 text-sm accentBtn transition flex items-center justify-center gap-2">
+            <span id="drinkIconMobile" aria-hidden="true"></span>
+            <span id="drinkTextMobile">Matcha</span>
+          </button>
+        </div>
+        <a href="#reserve" class="mobileCta" data-mobile-link>Reserve A Table</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Floating WhatsApp -->
+  <div class="fab">
+    <a href="#" id="waBtn" class="shine" aria-label="Chat on WhatsApp">
+      <span class="w-8 h-8 rounded-xl bg-white/10 grid place-items-center">💬</span>
+      <span>WhatsApp</span>
+    </a>
+  </div>
+
+  <!-- HERO -->
+  <main id="top" class="pt-28 md:pt-32">
+    <section class="mx-auto max-w-6xl px-4">
+      <div class="heroWrap relative rounded-[34px] overflow-hidden glow grain border border-white/10 bg-white/5">
+        <div class="heroLayer" id="heroParallax">
+          <div class="orb o1"></div>
+          <div class="orb o2"></div>
+          <div class="orb o3"></div>
+        </div>
+        <div class="curtain"></div>
+        <div class="heroGrid"></div>
+
+        <div class="heroShell relative grid lg:grid-cols-2 gap-10 p-7 md:p-12">
+          <!-- Left -->
+          <div class="heroText">
+            <div class="inline-flex items-center gap-2 rounded-full px-3 py-1 glass accentBorder text-xs text-white/85">
+              <span class="w-2 h-2 rounded-full" style="background: rgba(var(--A),.95)"></span>
+              <span id="heroChip">House-roasted coffee • cream lights • handcrafted drinks</span>
+            </div>
+
+            <h1 class="mt-6 text-4xl md:text-6xl leading-[1.04] font-ser tracking-tight">
+              <span class="revealLine"><span>NOFFELO</span></span>
+              <span class="text-white/55"> — </span>
+              <span class="revealLine"><span>artisan café</span></span>
+              <span class="text-white/55"> with a </span>
+              <span class="revealLine"><span>evening lounge</span></span>
+              <span class="text-white/55"> mood.</span>
+            </h1>
+
+            <div class="mt-5 brassLine"></div>
+
+            <p id="heroPara" class="mt-5 text-white/62 max-w-xl">
+              NOFFELO brings slow mornings and cozy evenings together in one space.
+              Explore handcrafted coffee, ceremonial matcha, and warm pastries in a calm artisan atmosphere.
+            </p>
+
+            <div class="heroCtas mt-7 flex flex-wrap items-center gap-3">
+              <a href="#menu" class="shine rounded-2xl px-5 py-3 bg-white text-zinc-950 font-semibold">View Menu</a>
+              <a href="#story" class="shine rounded-2xl px-5 py-3 creamBtn text-white/90">Our Story</a>
+              <div class="hoursTag text-sm text-white/50 ml-1">Café 9am–9pm • Lounge 6pm–11pm</div>
+            </div>
+
+            <div class="heroStats mt-10 grid grid-cols-3 gap-3 max-w-xl">
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Signature</div>
+                <div class="mt-1 text-lg font-semibold">Matcha / Coffee</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Venue</div>
+                <div id="statVenue" class="mt-1 text-lg font-semibold">Café</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Mood</div>
+                <div id="statDrink" class="mt-1 text-lg font-semibold">Matcha</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right (UPDATED cup scene only) -->
+          <div class="relative">
+            <div id="threeWrap" class="relative rounded-[28px] border border-white/10 bg-white/5 overflow-hidden glow">
+              <!-- Warm bokeh overlay -->
+              <div class="absolute inset-0 opacity-95"
+                style="background:
+                  radial-gradient(680px 460px at 25% 22%, rgba(var(--A),.14), transparent 62%),
+                  radial-gradient(820px 620px at 82% 36%, rgba(var(--BR),.18), transparent 64%),
+                  radial-gradient(900px 520px at 55% 115%, rgba(var(--HI),.11), transparent 65%),
+                  radial-gradient(120px 120px at 18% 24%, rgba(255,255,255,.10), transparent 70%),
+                  radial-gradient(160px 160px at 78% 18%, rgba(255,255,255,.08), transparent 70%),
+                  radial-gradient(140px 140px at 70% 64%, rgba(255,255,255,.06), transparent 72%),
+                  radial-gradient(110px 110px at 30% 70%, rgba(255,255,255,.05), transparent 72%);">
+              </div>
+
+              <canvas id="threeCanvas"></canvas>
+
+              <div class="steamWrap"><div class="steam"></div></div>
+
+              <!-- overlay cards (lighter) -->
+              <div class="pointer-events-none absolute top-6 left-6 right-6 flex justify-between gap-3">
+                <div class="glass rounded-2xl p-3 w-[46%] accentBorder" style="background: rgba(255,255,255,.05)">
+                  <div class="text-[11px] text-white/60">Signature</div>
+                  <div id="cardLeftTitle" class="mt-2 font-semibold">Iced Matcha</div>
+                  <div id="cardLeftPrice" class="mt-2 text-[11px] text-white/55">₨ 790</div>
+                </div>
+                <div class="glass rounded-2xl p-3 w-[46%] text-right accentBorder" style="background: rgba(255,255,255,.05)">
+                  <div class="text-[11px] text-white/60">Featured</div>
+                  <div id="cardRightTitle" class="mt-2 font-semibold">Brown Sugar Latte</div>
+                  <div id="cardRightPrice" class="mt-2 text-[11px] text-white/55">₨ 720</div>
+                </div>
+              </div>
+
+              <div class="pointer-events-none absolute bottom-6 left-6 right-6 glass rounded-2xl p-4 flex items-center justify-between accentBorder">
+                <div>
+                  <div class="text-sm font-semibold">Signature Cup Scene</div>
+                  <div class="text-xs text-white/55 mt-1">warm light • ceramic glaze • steam</div>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center accentBorder">✦</div>
+              </div>
+            </div>
+
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-sm font-semibold">Luxury warmth</div>
+                <div class="text-xs text-white/55 mt-1">espresso + brass glow</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-sm font-semibold">Cinematic motion</div>
+                <div class="text-xs text-white/55 mt-1">mask + parallax</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- STORY (UNCHANGED) -->
+    <section id="story" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 1000px;">
+      <div class="grid lg:grid-cols-12 gap-4">
+        <div class="storyText lg:col-span-6 glass rounded-[28px] p-7 md:p-10 glow grain accentBorder relative overflow-hidden">
+          <div class="absolute inset-0 opacity-70"
+               style="background:
+                 radial-gradient(700px 520px at 20% 30%, rgba(var(--BR),.14), transparent 62%),
+                 radial-gradient(700px 520px at 85% 75%, rgba(var(--A),.12), transparent 62%);"></div>
+
+          <div class="relative">
+            <div class="text-xs tracking-[0.35em] text-white/65 font-head">OUR STORY</div>
+            <h2 class="mt-3 text-3xl md:text-4xl font-ser tracking-tight leading-tight">
+              Slow mornings, <span class="text-white/65">cozy evenings.</span>
+            </h2>
+
+            <div class="mt-4 brassLine"></div>
+
+            <p id="storyPara" class="mt-5 text-white/62 leading-relaxed">
+              NOFFELO is designed like a warm studio with espresso tones, cream highlights, and soft brass light.
+              In the daytime café, guests enjoy carefully brewed coffee and matcha with a quiet work-friendly vibe.
+              In the evening lounge, lighting softens for relaxed conversations, date nights, and intimate gatherings.
+            </p>
+
+            <div class="mt-7 grid sm:grid-cols-3 gap-3">
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Craft</div>
+                <div class="mt-1 font-semibold">Whisk & Brew</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Materials</div>
+                <div class="mt-1 font-semibold">Wood & Brass</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Mood</div>
+                <div class="mt-1 font-semibold">Café → Lounge</div>
+              </div>
+            </div>
+
+            <div class="mt-7 glass rounded-2xl p-5 accentBorder">
+              <div class="text-xs text-white/60">House quote</div>
+              <div class="mt-2 text-lg font-ser">
+                “Luxury is quiet — it’s how it feels, not how loud it looks.”
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="storyVisual lg:col-span-6 grid grid-cols-12 gap-4">
+          <div class="col-span-12 glass rounded-[28px] p-4 glow grain accentBorder shine">
+            <div class="imgCard">
+              <img
+                src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=2000&q=80"
+                alt="Luxury latte"
+                loading="lazy"
+                style="height:320px"
+              />
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <div>
+                <div class="text-sm font-semibold">Signature Craft</div>
+                <div class="text-xs text-white/55 mt-1">warm tones • premium feel</div>
+              </div>
+              <div class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center accentBorder">✦</div>
+            </div>
+          </div>
+
+          <div class="col-span-6 glass rounded-[28px] p-4 glow grain accentBorder shine">
+            <div class="imgCard">
+              <img
+                src="https://images.unsplash.com/photo-1528823872057-9c018a7a7553?auto=format&fit=crop&w=2000&q=80"
+                alt="Matcha ceremony"
+                loading="lazy"
+                style="height:220px"
+              />
+            </div>
+            <div class="mt-4 text-sm font-semibold">Matcha Ceremony</div>
+            <div class="text-xs text-white/55 mt-1">clean • jade • calm</div>
+          </div>
+
+          <div class="col-span-6 glass rounded-[28px] p-4 glow grain accentBorder shine">
+            <div class="imgCard">
+              <img
+                src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=2000&q=80"
+                alt="Cafe interior"
+                loading="lazy"
+                style="height:220px"
+              />
+            </div>
+            <div class="mt-4 text-sm font-semibold">Warm Interior</div>
+            <div class="text-xs text-white/55 mt-1">wood • brass • light</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIGNATURE (UNCHANGED) -->
+    <section id="signature" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 900px;">
+      <div class="glass rounded-[32px] p-7 md:p-12 glow grain accentBorder relative overflow-hidden">
+        <div class="absolute inset-0 opacity-80"
+             style="background:
+               radial-gradient(900px 520px at 18% 30%, rgba(var(--A),.12), transparent 62%),
+               radial-gradient(900px 520px at 82% 70%, rgba(var(--BR),.14), transparent 62%);"></div>
+
+        <div class="relative grid lg:grid-cols-2 gap-10">
+          <div class="sigText">
+            <div class="text-xs tracking-[0.35em] text-white/65 font-head">SIGNATURE</div>
+            <h2 class="mt-3 text-3xl md:text-4xl font-ser tracking-tight leading-tight">
+              The premium way to <span class="text-white/65">serve a drink.</span>
+            </h2>
+            <div class="mt-4 brassLine"></div>
+            <p class="mt-5 text-white/62 leading-relaxed">
+              Matcha mode leans fresh and bright. Coffee mode leans warm and golden.
+              This site is built so the mood is visible — lighting, accents, buttons, and the signature cup.
+            </p>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <button class="shine rounded-2xl px-5 py-3 accentBtn" onclick="document.getElementById('drinkBtn').click()">Toggle Matcha/Coffee</button>
+              <button class="shine rounded-2xl px-5 py-3 creamBtn" onclick="document.getElementById('venueBtn').click()">Toggle Café/Lounge</button>
+            </div>
+          </div>
+
+          <div class="sigCards grid sm:grid-cols-2 gap-4">
+            <div class="glass rounded-[26px] p-6 accentBorder">
+              <div class="text-xs text-white/60">Texture</div>
+              <div class="mt-2 text-lg font-semibold">Warm materials</div>
+              <div class="mt-2 text-sm text-white/60">espresso base • cream highlight • brass glow</div>
+            </div>
+            <div class="glass rounded-[26px] p-6 accentBorder">
+              <div class="text-xs text-white/60">Motion</div>
+              <div class="mt-2 text-lg font-semibold">Cinematic reveals</div>
+              <div class="mt-2 text-sm text-white/60">mask text • parallax layers • smooth scroll</div>
+            </div>
+            <div class="glass rounded-[26px] p-6 accentBorder">
+              <div class="text-xs text-white/60">Photography</div>
+              <div class="mt-2 text-lg font-semibold">Real images</div>
+              <div class="mt-2 text-sm text-white/60">menu + gallery feel like a real café brand</div>
+            </div>
+            <div class="glass rounded-[26px] p-6 accentBorder">
+              <div class="text-xs text-white/60">Branding</div>
+              <div class="mt-2 text-lg font-semibold">NOFFELO identity</div>
+              <div class="mt-2 text-sm text-white/60">minimal, warm, premium — not loud</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU (UNCHANGED) -->
+    <section id="menu" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 1200px;">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <div class="text-xs tracking-[0.35em] text-white/65 font-head">MENU</div>
+          <h2 class="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">
+            Signature drinks <span class="text-white/60">& pastries</span>
+          </h2>
+        </div>
+        <div class="hidden md:block text-sm text-white/55">Real images • Hover zoom • Premium cards</div>
+      </div>
+
+      <div id="menuGrid" class="mt-7 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1528823872057-9c018a7a7553?auto=format&fit=crop&w=1600&q=80" alt="Iced matcha latte" loading="lazy"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Iced Matcha Latte</div>
+            <div class="text-sm text-white/65">₨ 790</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">ceremonial matcha • creamy • chilled</div>
+        </div>
+
+        <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=1600&q=80" alt="Brown sugar latte" loading="lazy"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Brown Sugar Latte</div>
+            <div class="text-sm text-white/65">₨ 720</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">espresso • caramel • ice</div>
+        </div>
+
+        <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=1600&q=80" alt="Americano coffee" loading="lazy"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Americano</div>
+            <div class="text-sm text-white/65">₨ 520</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">clean • bold • classic</div>
+        </div>
+
+        <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=1600&q=80" alt="Hot tea" loading="lazy"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Hot Tea</div>
+            <div class="text-sm text-white/65">₨ 420</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">comfort • warm • simple</div>
+        </div>
+
+        <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1516455207990-7a41ce80f7ee?auto=format&fit=crop&w=1600&q=80" alt="Croissant pastry" loading="lazy"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Butter Croissant</div>
+            <div class="text-sm text-white/65">₨ 380</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">fresh • flaky • baked daily</div>
+        </div>
+
+        <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=1600&q=80" alt="Chocolate cake" loading="lazy"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Chocolate Cake</div>
+            <div class="text-sm text-white/65">₨ 520</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">rich • soft • premium</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EVENTS (NEW SECTION ONLY; nothing else changed) -->
+    <section id="events" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 900px;">
+      <div class="flex items-end justify-between gap-6">
+        <div>
+          <div class="text-xs tracking-[0.35em] text-white/65 font-head">EVENTS</div>
+            <h2 class="mt-2 text-3xl md:text-4xl font-ser tracking-tight">
+            Curated moments, <span class="text-white/65">artisan vibe</span>
+            </h2>
+        </div>
+        <div class="hidden md:block text-sm text-white/55">
+          Matcha workshops • lounge nights • private tastings
+        </div>
+      </div>
+
+      <div class="mt-4 brassLine"></div>
+
+      <div class="mt-7 grid md:grid-cols-3 gap-4">
+        <div class="glass rounded-[28px] p-5 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img
+              src="https://images.unsplash.com/photo-1528823872057-9c018a7a7553?auto=format&fit=crop&w=2000&q=80"
+              alt="Matcha workshop"
+              loading="lazy"
+              style="height:220px"
+            />
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Matcha Workshop</div>
+            <div class="text-xs text-white/55">Sat • 5pm</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">Ceremonial whisking • tasting flight • calm vibe</div>
+        </div>
+
+        <div class="glass rounded-[28px] p-5 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img
+              src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=2000&q=80"
+              alt="Acoustic lounge night"
+              loading="lazy"
+              style="height:220px"
+            />
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Acoustic Lounge Night</div>
+            <div class="text-xs text-white/55">Fri • 8pm</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">Velvet mood • soft lights • premium seating</div>
+        </div>
+
+        <div class="glass rounded-[28px] p-5 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img
+              src="https://images.unsplash.com/photo-1521017432531-fbd92d768814?auto=format&fit=crop&w=2000&q=80"
+              alt="Private tasting"
+              loading="lazy"
+              style="height:220px"
+            />
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div class="text-sm font-semibold">Private Tasting</div>
+            <div class="text-xs text-white/55">By Appointment</div>
+          </div>
+          <div class="mt-2 text-xs text-white/55">Signature espresso • matcha pairing • dessert flight</div>
+        </div>
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3">
+        <a href="#reserve" class="shine rounded-2xl px-5 py-3 bg-white text-zinc-950 font-semibold">Reserve for Events</a>
+        <a href="#gallery" class="shine rounded-2xl px-5 py-3 creamBtn text-white/90">See Gallery</a>
+      </div>
+    </section>
+
+    <!-- LOUNGE (UNCHANGED) -->
+    <section id="lounge" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 980px;">
+      <div class="grid lg:grid-cols-12 gap-4">
+        <div class="loungeLeft lg:col-span-7 glass rounded-[32px] p-7 md:p-12 glow grain accentBorder relative overflow-hidden">
+          <div class="absolute inset-0 opacity-85"
+               style="background:
+                 radial-gradient(800px 520px at 18% 35%, rgba(var(--BR),.16), transparent 62%),
+                 radial-gradient(900px 620px at 80% 70%, rgba(var(--HI),.12), transparent 62%);"></div>
+
+          <div class="relative">
+            <div class="text-xs tracking-[0.35em] text-white/65 font-head">DELUXE LOUNGE</div>
+            <h2 class="mt-3 text-3xl md:text-4xl font-ser tracking-tight">
+              Cozy nights. <span class="text-white/65">Relaxed comfort.</span>
+            </h2>
+            <div class="mt-4 brassLine"></div>
+            <p class="mt-5 text-white/62 leading-relaxed">
+              After 6pm, NOFFELO shifts into lounge mode: softer shadows, premium seats,
+              and a more intimate vibe — ideal for meetings, dates, and private evenings.
+            </p>
+
+            <div class="mt-7 grid sm:grid-cols-3 gap-3">
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">VIP</div>
+                <div class="mt-1 font-semibold">Private seating</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Service</div>
+                <div class="mt-1 font-semibold">Table experience</div>
+              </div>
+              <div class="glass rounded-2xl p-4 accentBorder">
+                <div class="text-[11px] text-white/55">Mood</div>
+                <div class="mt-1 font-semibold">Soft lighting</div>
+              </div>
+            </div>
+
+            <div class="mt-7 flex flex-wrap gap-3">
+              <a href="#reserve" class="shine rounded-2xl px-5 py-3 bg-white text-zinc-950 font-semibold">Book VIP</a>
+              <a href="#gallery" class="shine rounded-2xl px-5 py-3 creamBtn text-white/90">See Lounge</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="loungeRight lg:col-span-5 glass rounded-[32px] p-5 md:p-6 glow grain accentBorder">
+          <div class="imgCard">
+            <img
+              src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=2000&q=80"
+              alt="Deluxe lounge interior"
+              loading="lazy"
+              style="height:360px"
+            />
+          </div>
+          <div class="mt-4">
+            <div class="text-sm font-semibold">Lounge Interior</div>
+            <div class="text-xs text-white/55 mt-1">velvet mood • premium nights</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TESTIMONIALS (UNCHANGED) -->
+    <section id="testimonials" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 700px;">
+      <div class="text-xs tracking-[0.35em] text-white/65 font-head">TESTIMONIALS</div>
+      <h2 class="mt-2 text-3xl md:text-4xl font-ser tracking-tight">
+        What guests <span class="text-white/65">feel</span>
+      </h2>
+      <div class="mt-4 brassLine"></div>
+
+      <div class="mt-7 grid md:grid-cols-3 gap-4">
+        <div class="glass rounded-[28px] p-6 glow grain accentBorder">
+          <div class="text-sm font-semibold">“The lighting is unreal.”</div>
+          <div class="mt-2 text-sm text-white/60 leading-relaxed">
+            The place feels warm and premium. Matcha tastes clean, coffee tastes rich. Perfect vibe.
+          </div>
+          <div class="mt-5 text-xs text-white/50">— Guest review</div>
+        </div>
+        <div class="glass rounded-[28px] p-6 glow grain accentBorder">
+          <div class="text-sm font-semibold">“Comfortable, calm, and thoughtful.”</div>
+          <div class="mt-2 text-sm text-white/60 leading-relaxed">
+            You can work in the café during the day and enjoy a cozy evening lounge vibe at night.
+          </div>
+          <div class="mt-5 text-xs text-white/50">— Guest review</div>
+        </div>
+        <div class="glass rounded-[28px] p-6 glow grain accentBorder">
+          <div class="text-sm font-semibold">“Feels like a brand.”</div>
+          <div class="mt-2 text-sm text-white/60 leading-relaxed">
+            Everything looks designed—menu, photos, mood, even the cup presentation.
+          </div>
+          <div class="mt-5 text-xs text-white/50">— Guest review</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- GALLERY (UNCHANGED) -->
+    <section id="gallery" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20" style="content-visibility:auto; contain-intrinsic-size: 1px 1200px;">
+      <div>
+        <div class="text-xs tracking-[0.35em] text-white/65 font-head">GALLERY</div>
+        <h2 class="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">
+          Café moments <span class="text-white/60">& lounge nights</span>
+        </h2>
+      </div>
+
+      <div class="mt-7 grid md:grid-cols-12 gap-4">
+        <div class="galleryCard md:col-span-7 glass rounded-[28px] p-4 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=2000&q=80"
+                 alt="Cafe interior" loading="lazy" style="height:340px"/>
+          </div>
+          <div class="mt-4 flex items-center justify-between">
+            <div>
+              <div class="text-sm font-semibold">Warm Café Interior</div>
+              <div class="text-xs text-white/55 mt-1">soft lights • calm seating</div>
+            </div>
+            <div class="w-10 h-10 rounded-xl bg-white/5 grid place-items-center accentBorder">✦</div>
+          </div>
+        </div>
+
+        <div class="galleryCard md:col-span-5 glass rounded-[28px] p-4 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&w=2000&q=80"
+                 alt="Coffee bar" loading="lazy" style="height:340px"/>
+          </div>
+          <div class="mt-4">
+            <div class="text-sm font-semibold">Bar & Craft</div>
+            <div class="text-xs text-white/55 mt-1">espresso • pour • detail</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4 grid md:grid-cols-3 gap-4">
+        <div class="galleryCard glass rounded-[28px] p-4 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1528823872057-9c018a7a7553?auto=format&fit=crop&w=2000&q=80"
+                 alt="Matcha preparation" loading="lazy" style="height:240px"/>
+          </div>
+          <div class="mt-4 text-sm font-semibold">Matcha Ritual</div>
+          <div class="text-xs text-white/55 mt-1">whisked • smooth</div>
+        </div>
+
+        <div class="galleryCard glass rounded-[28px] p-4 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=2000&q=80"
+                 alt="Coffee detail" loading="lazy" style="height:240px"/>
+          </div>
+          <div class="mt-4 text-sm font-semibold">Coffee Detail</div>
+          <div class="text-xs text-white/55 mt-1">bold • clean</div>
+        </div>
+
+        <div class="galleryCard glass rounded-[28px] p-4 glow grain accentBorder shine">
+          <div class="imgCard">
+            <img src="https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=2000&q=80"
+                 alt="Lounge interior" loading="lazy" style="height:240px"/>
+          </div>
+          <div class="mt-4 text-sm font-semibold">Evening Lounge</div>
+          <div class="text-xs text-white/55 mt-1">cozy • amber • night</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RESERVE (UNCHANGED) -->
+    <section id="reserve" class="mx-auto max-w-6xl px-4 mt-14 md:mt-20 mb-20" style="content-visibility:auto; contain-intrinsic-size: 1px 980px;">
+      <div>
+        <div class="text-xs tracking-[0.35em] text-white/65 font-head">RESERVE</div>
+        <h2 class="mt-2 text-3xl md:text-4xl font-semibold tracking-tight">
+          Book your table <span class="text-white/60">in seconds</span>
+        </h2>
+      </div>
+
+      <div class="mt-7 grid lg:grid-cols-2 gap-4">
+        <div class="glass rounded-[28px] p-7 glow accentBorder">
+          <div class="text-sm text-white/60">Live reservation form</div>
+
+          <form id="reserveForm" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="md:col-span-1">
+              <label for="reserveName" class="text-xs text-white/60">Name</label>
+              <input class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-white/20"
+                     id="reserveName" name="name" placeholder="Your name" autocomplete="name" required/>
+            </div>
+            <div class="md:col-span-1">
+              <label for="reservePhone" class="text-xs text-white/60">Phone</label>
+              <input class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-white/20"
+                     id="reservePhone" name="phone" placeholder="+92..." autocomplete="tel" inputmode="tel" required />
+            </div>
+            <div class="md:col-span-1">
+              <label for="reserveDate" class="text-xs text-white/60">Date</label>
+              <input id="reserveDate" name="date" type="date" class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-white/20" required/>
+            </div>
+            <div class="md:col-span-1">
+              <label for="reserveTime" class="text-xs text-white/60">Time</label>
+              <input id="reserveTime" name="time" type="time" class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-white/20" required/>
+            </div>
+            <div class="md:col-span-1">
+              <label for="reserveGuests" class="text-xs text-white/60">Guests</label>
+              <input id="reserveGuests" name="guests" type="number" min="1" max="20" value="2" class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-white/20" required/>
+            </div>
+            <div class="md:col-span-1">
+              <label for="reserveOccasion" class="text-xs text-white/60">Occasion (optional)</label>
+              <input id="reserveOccasion" name="occasion" class="mt-2 w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-white/20"
+                     placeholder="Birthday, meeting, date..." />
+            </div>
+            <div class="md:col-span-2">
+              <label class="text-xs text-white/60">Venue</label>
+              <input id="reserveVenue" name="venue" type="hidden" value="Café" />
+              <div class="mt-2 flex gap-2" id="reserveVenueOptions">
+                <button type="button" data-venue-choice="Café" class="glass accentBorder rounded-full px-3 py-2 text-xs">Café</button>
+                <button type="button" data-venue-choice="Evening Lounge" class="glass accentBorder rounded-full px-3 py-2 text-xs">Evening Lounge</button>
+              </div>
+            </div>
+            <div class="md:col-span-2 flex flex-wrap gap-3 mt-2">
+              <button class="shine rounded-2xl px-5 py-3 bg-white text-zinc-950 font-semibold" type="submit">
+                Confirm on WhatsApp
+              </button>
+              <a href="#top" class="shine rounded-2xl px-5 py-3 creamBtn text-white/90">
+                Back to top
+              </a>
+            </div>
+            <div id="reserveMsg" class="md:col-span-2 text-xs text-white/60" aria-live="polite"></div>
+          </form>
+
+          <div class="mt-6 text-xs text-white/50">
+            Submit opens WhatsApp with your reservation details.
+          </div>
+          <div id="reserveRef" class="mt-2 text-xs text-white/45" aria-live="polite"></div>
+        </div>
+
+        <div class="glass rounded-[28px] p-5 glow grain accentBorder overflow-hidden">
+          <div class="text-sm text-white/60 mb-3">Our location</div>
+          <div class="rounded-2xl overflow-hidden border border-white/10">
+            <iframe
+              title="Map"
+              width="100%"
+              height="360"
+              style="border:0; background: rgba(255,255,255,.03)"
+              loading="lazy"
+              allowfullscreen
+              referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps?q=Lahore%20Pakistan&output=embed">
+            </iframe>
+          </div>
+          <div class="mt-4 text-xs text-white/55">
+            MM Alam Road, Lahore • Open daily
+          </div>
+        </div>
+      </div>
+
+      <footer class="mt-10 text-center text-xs text-white/45">
+        © <span id="year"></span> NOFFELO • Artisan Café & Evening Lounge
+        <div class="mt-2">
+          <a href="./admin.html" class="text-white/60 hover:text-white">Admin Panel</a>
+          <span class="mx-2">•</span>
+          <a href="./menu-editor.html" class="text-white/60 hover:text-white">Menu Editor</a>
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <div id="reserveModal" class="reserveModal" aria-hidden="true">
+    <div class="reserveDialog" role="dialog" aria-modal="true" aria-labelledby="reserveModalTitle" aria-describedby="reserveModalDesc">
+      <div class="text-xs tracking-[0.25em] text-white/55">RESERVATION READY</div>
+      <h3 id="reserveModalTitle" class="mt-2 text-3xl font-ser">Booking request prepared</h3>
+      <p id="reserveModalDesc" class="mt-2 text-sm text-white/65">Your reservation details are ready on WhatsApp. Keep your reference for follow-up.</p>
+      <div class="mt-4 glass rounded-2xl p-4 accentBorder">
+        <div class="text-xs text-white/55">Booking Reference</div>
+        <div id="modalBookingRef" class="mt-1 text-lg font-semibold">-</div>
+      </div>
+      <div id="modalBookingMeta" class="mt-3 text-xs text-white/60"></div>
+      <div class="modalActions">
+        <button id="copyRefBtn" class="primary" type="button">Copy Reference</button>
+        <a id="modalWhatsAppLink" class="ghost" href="#" target="_blank" rel="noopener noreferrer">Open WhatsApp</a>
+        <button id="closeReserveModalBtn" class="ghost" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JS libs -->
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const APP_CONFIG = {
+      whatsappNumber: "923085233717",
+      // Set to your deployed backend ingest endpoint in production.
+      backendEndpoint: (window.__NOFFELO_BACKEND_ENDPOINT__ || "http://127.0.0.1:8787/ingest"),
+      // For security, inject from non-committed local config when possible.
+      backendIngestToken: (window.__NOFFELO_INGEST_TOKEN__ || ""),
+      mapPinLink: (window.__NOFFELO_MAP_PIN__ || "https://maps.google.com/?q=MM+Alam+Road+Lahore"),
+      openingHours: (window.__NOFFELO_OPENING_HOURS__ || "Café 9am-9pm, Lounge 6pm-11pm"),
+    };
+    const ANALYTICS_KEY = "noffelo_analytics_events";
+    const RESERVATION_KEY = "noffelo_reservations";
+
+    function generateBookingRef() {
+      const d = new Date();
+      const datePart = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+      const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+      return `NF-${datePart}-${rand}`;
+    }
+
+    async function initMenuFromJson() {
+      const menuGrid = $("menuGrid");
+      if (!menuGrid) return;
+      try {
+        const res = await fetch("./menu-data.json", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!Array.isArray(data?.items) || !data.items.length) return;
+        menuGrid.innerHTML = data.items.map((item) => `
+          <div class="menuCard shine glass rounded-[24px] p-4 glow accentBorder">
+            <div class="imgCard">
+              <img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.alt || item.name)}" loading="lazy"/>
+            </div>
+            <div class="mt-4 flex items-center justify-between">
+              <div class="text-sm font-semibold">${escapeHtml(item.name)}</div>
+              <div class="text-sm text-white/65">${escapeHtml(item.price)}</div>
+            </div>
+            <div class="mt-2 text-xs text-white/55">${escapeHtml(item.desc || "")}</div>
+          </div>
+        `).join("");
+      } catch (e) {}
+    }
+
+    async function postToBackend(payload) {
+      if (!APP_CONFIG.backendEndpoint) return false;
+      try {
+        const res = await fetch(APP_CONFIG.backendEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(APP_CONFIG.backendIngestToken ? { "Authorization": `Bearer ${APP_CONFIG.backendIngestToken}` } : {})
+          },
+          body: JSON.stringify(payload),
+          keepalive: true
+        });
+        return res.ok;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    function trackEvent(eventName, payload = {}) {
+      const eventData = {
+        event: eventName,
+        ts: new Date().toISOString(),
+        page: location.pathname + location.hash,
+        ...payload
+      };
+
+      // If Google Analytics is available, send it.
+      if (typeof window.gtag === "function") {
+        window.gtag("event", eventName, payload);
+      }
+
+      // Always keep a local trail for quick verification/debug.
+      try {
+        const events = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || "[]");
+        events.push(eventData);
+        localStorage.setItem(ANALYTICS_KEY, JSON.stringify(events.slice(-200)));
+      } catch (e) {}
+
+      // Expose in console/devtools if needed.
+      window.__LAST_TRACKED_EVENT__ = eventData;
+
+      // Fire-and-forget backend sync.
+      postToBackend({
+        type: "analytics_event",
+        data: eventData
+      });
+    }
+
+    async function loadScriptAny(urls) {
+      for (const url of urls) {
+        try {
+          await new Promise((resolve, reject) => {
+            const s = document.createElement("script");
+            s.src = url;
+            s.async = true;
+            s.onload = resolve;
+            s.onerror = reject;
+            document.head.appendChild(s);
+          });
+          return true;
+        } catch(e) {}
+      }
+      return false;
+    }
+
+    async function loadThreeModuleAny(urls) {
+      for (const url of urls) {
+        try {
+          const mod = await import(url);
+          window.THREE = mod;
+          return true;
+        } catch (e) {}
+      }
+      return false;
+    }
+
+    function hidePreloaderSafely(){
+      const pre = $("preloader");
+      if (pre) pre.style.display = "none";
+    }
+
+    function cupSVG({variant="matcha"} = {}){
+      const isCoffee = variant === "coffee";
+      const fill = isCoffee ? "rgba(255,210,120,.95)" : "rgba(165,255,191,.95)";
+      const stroke = "rgba(255,255,255,.75)";
+      const steam = isCoffee ? 1 : 0;
+      return `
+        <svg class="cupIcon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M6.5 8.2c0-1.1.9-2 2-2h6.8c1.1 0 2 .9 2 2v5.5c0 2.9-2.4 5.3-5.3 5.3H10.8c-2.9 0-4.3-2.4-4.3-5.3V8.2Z"
+                fill="${fill}" opacity="0.28"/>
+          <path d="M7.2 9h9.6v4.8c0 2.4-2 4.4-4.4 4.4h-.8c-2.4 0-4.4-2-4.4-4.4V9Z"
+                stroke="${stroke}" stroke-width="1.3" opacity="0.9"/>
+          <path d="M17 10.2h1.3c1.2 0 2.2 1 2.2 2.2v.2c0 1.2-1 2.2-2.2 2.2H17"
+                stroke="${stroke}" stroke-width="1.3" opacity="0.9" stroke-linecap="round"/>
+          <path d="M6.8 19.6h10.9" stroke="${stroke}" stroke-width="1.3" opacity="0.55" stroke-linecap="round"/>
+          ${steam ? `
+            <path d="M9.3 5.3c.2.6.1 1.1-.3 1.6-.4.4-.5.9-.3 1.5" stroke="${stroke}" stroke-width="1.1" opacity="0.55" stroke-linecap="round"/>
+            <path d="M12 5.0c.2.6.1 1.1-.3 1.6-.4.4-.5.9-.3 1.5" stroke="${stroke}" stroke-width="1.1" opacity="0.55" stroke-linecap="round"/>
+          ` : `
+            <path d="M10.6 5.6c.2.5.1 1-.3 1.4-.4.4-.5.8-.3 1.3" stroke="${stroke}" stroke-width="1.1" opacity="0.45" stroke-linecap="round"/>
+          `}
+        </svg>
+      `;
+    }
+
+    function updateDrinkBtnUI(drink){
+      $("drinkText").textContent = (drink === "matcha") ? "Matcha" : "Coffee";
+      $("drinkIcon").innerHTML = cupSVG({ variant: drink });
+      if ($("drinkTextMobile")) $("drinkTextMobile").textContent = (drink === "matcha") ? "Matcha" : "Coffee";
+      if ($("drinkIconMobile")) $("drinkIconMobile").innerHTML = cupSVG({ variant: drink });
+    }
+
+    function reservationVenueFromTheme(themeVenue){
+      return themeVenue === "lounge" ? "Evening Lounge" : "Café";
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    let __lastFocusBeforeModal = null;
+    function closeReserveModal(){
+      const modal = $("reserveModal");
+      if (!modal) return;
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      if (__lastFocusBeforeModal && typeof __lastFocusBeforeModal.focus === "function") {
+        __lastFocusBeforeModal.focus();
+      }
+    }
+
+    function openReserveModal({ bookingRef, venue, guests, date, time, waUrl }){
+      const modal = $("reserveModal");
+      const refEl = $("modalBookingRef");
+      const metaEl = $("modalBookingMeta");
+      const waLink = $("modalWhatsAppLink");
+      if (!modal || !refEl || !metaEl || !waLink) return;
+
+      __lastFocusBeforeModal = document.activeElement;
+      refEl.textContent = bookingRef;
+      metaEl.textContent = `${venue} • ${guests} guests • ${date} ${time}`;
+      waLink.href = waUrl;
+
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      $("copyRefBtn")?.focus();
+    }
+
+    function initReservationForm(){
+      const form = $("reserveForm");
+      if (!form) return;
+
+      const nameInput = $("reserveName");
+      const phoneInput = $("reservePhone");
+      const dateInput = $("reserveDate");
+      const timeInput = $("reserveTime");
+      const guestsInput = $("reserveGuests");
+      const occasionInput = $("reserveOccasion");
+      const venueInput = $("reserveVenue");
+      const msgEl = $("reserveMsg");
+      const refEl = $("reserveRef");
+      const venueButtons = Array.from(document.querySelectorAll("#reserveVenueOptions [data-venue-choice]"));
+      const managedFields = [nameInput, phoneInput, dateInput, timeInput, guestsInput];
+
+      const todayISO = new Date().toISOString().slice(0, 10);
+      dateInput.min = todayISO;
+
+      function setMsg(text, isError=false){
+        msgEl.style.color = isError ? "rgba(252,165,165,0.90)" : "rgba(255,255,255,0.75)";
+        msgEl.innerHTML = text;
+      }
+      const resetFieldStates = () => {
+        managedFields.forEach((field) => { field.setAttribute("aria-invalid", "false"); });
+      };
+      const setFieldError = (field, text) => {
+        resetFieldStates();
+        field.setAttribute("aria-invalid", "true");
+        field.focus();
+        setMsg(text, true);
+      };
+
+      function syncVenueButtons(){
+        venueButtons.forEach((btn) => {
+          const active = btn.dataset.venueChoice === venueInput.value;
+          btn.style.background = active ? "rgba(var(--A), .16)" : "rgba(255,255,255,.045)";
+          btn.style.borderColor = active ? "rgba(var(--A), .35)" : "rgba(255,255,255,.10)";
+          btn.style.color = active ? "rgba(255,255,255,.96)" : "rgba(255,255,255,.78)";
+        });
+      }
+
+      venueButtons.forEach((btn) => {
+        btn.addEventListener("click", () => {
+          venueInput.value = btn.dataset.venueChoice;
+          syncVenueButtons();
+          setMsg("");
+        });
+      });
+
+      window.__SYNC_RESERVE_VENUE__ = (themeVenue) => {
+        venueInput.value = reservationVenueFromTheme(themeVenue);
+        syncVenueButtons();
+      };
+
+      try {
+        const saved = JSON.parse(localStorage.getItem("noffelo_reservation") || "{}");
+        if (saved.name) nameInput.value = saved.name;
+        if (saved.phone) phoneInput.value = saved.phone;
+        if (saved.guests) guestsInput.value = String(saved.guests);
+        if (saved.occasion) occasionInput.value = saved.occasion;
+      } catch(e) {}
+
+      window.__SYNC_RESERVE_VENUE__(document.body.getAttribute("data-venue"));
+      managedFields.forEach((field) => {
+        field.setAttribute("aria-invalid", "false");
+        field.addEventListener("input", () => {
+          field.setAttribute("aria-invalid", "false");
+        });
+      });
+
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const name = nameInput.value.trim();
+        const phone = phoneInput.value.trim();
+        const date = dateInput.value;
+        const time = timeInput.value;
+        const guests = parseInt(guestsInput.value, 10);
+        const occasion = occasionInput.value.trim();
+        const venue = venueInput.value;
+
+        if (name.length < 2) return setFieldError(nameInput, "Please enter a valid name.");
+        if (!/^\+?[0-9\s-]{10,16}$/.test(phone)) return setFieldError(phoneInput, "Please enter a valid phone number.");
+        if (!date) return setFieldError(dateInput, "Please select a date.");
+        if (!time) return setFieldError(timeInput, "Please select a time.");
+        if (!Number.isInteger(guests) || guests < 1 || guests > 20) return setFieldError(guestsInput, "Guests must be between 1 and 20.");
+
+        const reservationAt = new Date(`${date}T${time}`);
+        if (Number.isNaN(reservationAt.getTime())) return setFieldError(timeInput, "Invalid date/time selected.");
+        if (reservationAt.getTime() < Date.now() - 60000) return setFieldError(dateInput, "Please select a future date/time.");
+
+        resetFieldStates();
+
+        const safeName = escapeHtml(name);
+        const safePhone = escapeHtml(phone);
+        const safeVenue = escapeHtml(venue);
+        const safeOccasion = escapeHtml(occasion || "None");
+
+        const waMessage = [
+          "Hi NOFFELO, I want to reserve a table.",
+          `Name: ${name}`,
+          `Phone: ${phone}`,
+          `Venue: ${venue}`,
+          `Guests: ${guests}`,
+          `Date: ${date}`,
+          `Time: ${time}`,
+          `Occasion: ${occasion || "None"}`,
+          "",
+          "Please confirm my booking, share the location pin and opening hours.",
+          `Map pin requested: ${APP_CONFIG.mapPinLink}`,
+          `Hours requested: ${APP_CONFIG.openingHours}`
+        ].join("\n");
+
+        const waUrl = `https://wa.me/${APP_CONFIG.whatsappNumber}?text=${encodeURIComponent(waMessage)}`;
+        $("waBtn").href = waUrl;
+        const bookingRef = generateBookingRef();
+
+        const reservationData = {
+          bookingRef,
+          name,
+          phone,
+          venue,
+          guests,
+          date,
+          time,
+          occasion: occasion || "",
+          ts: new Date().toISOString()
+        };
+
+        try {
+          localStorage.setItem("noffelo_reservation", JSON.stringify({ name, phone, guests, occasion }));
+          const reservations = JSON.parse(localStorage.getItem(RESERVATION_KEY) || "[]");
+          reservations.push(reservationData);
+          localStorage.setItem(RESERVATION_KEY, JSON.stringify(reservations.slice(-100)));
+        } catch(e) {}
+
+        postToBackend({
+          type: "reservation_request",
+          data: reservationData
+        });
+
+        const popup = window.open(waUrl, "_blank", "noopener,noreferrer");
+        if (!popup) {
+          trackEvent("reservation_popup_blocked", {
+            venue,
+            guests
+          });
+          setMsg(
+            `Popup blocked. <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="text-white/90">Tap here to open WhatsApp</a><br>` +
+            `<span class="text-white/60">${safeName} • ${safePhone} • ${safeVenue} • ${guests} guests • ${date} ${time} • Occasion: ${safeOccasion}</span>`,
+            true
+          );
+          return;
+        }
+
+        trackEvent("reservation_submit_success", {
+          bookingRef,
+          venue,
+          guests,
+          hasOccasion: Boolean(occasion)
+        });
+
+        setMsg(
+          `Reservation request ready on WhatsApp.<br>` +
+          `<span class="text-white/60">${safeName} • ${safePhone} • ${safeVenue} • ${guests} guests • ${date} ${time} • Occasion: ${safeOccasion}</span>`
+        );
+        if (refEl) {
+          refEl.textContent = `Booking Ref: ${bookingRef} • Keep this for follow-up`;
+        }
+        openReserveModal({ bookingRef, venue, guests, date, time, waUrl });
+      });
+    }
+
+    function setDrink(drink){
+      document.body.setAttribute("data-drink", drink);
+      $("statDrink").textContent = (drink === "matcha") ? "Matcha" : "Coffee";
+      updateDrinkBtnUI(drink);
+
+      if (drink === "matcha") {
+        $("cardLeftTitle").textContent = "Iced Matcha";
+        $("cardLeftPrice").textContent = "₨ 790";
+        $("cardRightTitle").textContent = "Matcha Cream";
+        $("cardRightPrice").textContent = "₨ 840";
+      } else {
+        $("cardLeftTitle").textContent = "Signature Espresso";
+        $("cardLeftPrice").textContent = "₨ 650";
+        $("cardRightTitle").textContent = "Mocha Velvet";
+        $("cardRightPrice").textContent = "₨ 760";
+      }
+
+      window.__THREE_THEME__ && window.__THREE_THEME__(drink, document.body.getAttribute("data-venue"));
+    }
+
+    function setVenue(venue){
+      document.body.setAttribute("data-venue", venue);
+      $("venueBtn").textContent = (venue === "cafe") ? "Café" : "Lounge";
+      if ($("venueBtnMobile")) $("venueBtnMobile").textContent = (venue === "cafe") ? "Café" : "Lounge";
+      $("venueLabel").textContent = (venue === "cafe") ? "Artisan Café" : "Evening Lounge";
+      $("statVenue").textContent = (venue === "cafe") ? "Café" : "Lounge";
+
+      $("heroChip").textContent =
+        (venue === "cafe")
+          ? "House-roasted coffee • cream lights • handcrafted drinks"
+          : "Cozy evenings • amber glow • lounge comfort";
+
+      window.__SYNC_RESERVE_VENUE__ && window.__SYNC_RESERVE_VENUE__(venue);
+      window.__THREE_THEME__ && window.__THREE_THEME__(document.body.getAttribute("data-drink"), venue);
+    }
+
+    function initHeroParallax(){
+      const layer = $("heroParallax");
+      if (!layer) return;
+
+      let mx = 0, my = 0, tx = 0, ty = 0;
+      window.addEventListener("mousemove", (e) => {
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        tx = (e.clientX - cx) / cx;
+        ty = (e.clientY - cy) / cy;
+      });
+
+      function raf(){
+        mx += (tx - mx) * 0.06;
+        my += (ty - my) * 0.06;
+        layer.style.transform = `translate3d(${mx * 18}px, ${my * 10}px, 0)`;
+        requestAnimationFrame(raf);
+      }
+      raf();
+    }
+
+    function cinematicReveals(){
+      const lines = document.querySelectorAll(".revealLine > span");
+      if (!window.gsap) {
+        lines.forEach((el) => { el.style.transform = "translateY(0)"; });
+        return;
+      }
+
+      const tl = gsap.timeline();
+      tl.fromTo(lines, { yPercent: 120 }, { yPercent: 0, duration: 1.15, ease: "power4.out", stagger: 0.08 }, 0.10)
+        .from(".heroText p, .heroText .mt-7, .heroText .mt-10", { opacity: 0, y: 18, duration: 0.95, ease: "power3.out", stagger: 0.12 }, 0.55)
+        .from("#threeWrap", { opacity: 0, y: 16, duration: 1.05, ease: "power3.out" }, 0.45);
+
+      if (window.ScrollTrigger){
+        gsap.registerPlugin(ScrollTrigger);
+
+        const fadeUp = (sel) => {
+          gsap.from(sel, {
+            opacity: 0, y: 18, duration: 0.95, ease: "power3.out",
+            scrollTrigger: { trigger: sel, start: "top 85%" }
+          });
+        };
+        const fadeUpStagger = (sel, st=0.07) => {
+          gsap.from(sel, {
+            opacity: 0, y: 18, duration: 0.95, ease: "power3.out",
+            stagger: st,
+            scrollTrigger: { trigger: sel, start: "top 85%" }
+          });
+        };
+
+        fadeUp(".storyText");
+        fadeUpStagger(".storyVisual > div", 0.08);
+        fadeUp("#signature");
+        fadeUpStagger(".menuCard", 0.06);
+        fadeUp("#events");
+        fadeUp("#lounge");
+        fadeUpStagger("#testimonials .glass", 0.08);
+        fadeUpStagger(".galleryCard", 0.06);
+        fadeUp("#reserve");
+      }
+    }
+
+    // ====== Three.js aesthetic ceramic mug + saucer + liquid mode
+    function initThreeAestheticMug(){
+      if (!window.THREE) return;
+
+      const canvas = document.getElementById("threeCanvas");
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setClearColor(0x000000, 0);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 100);
+      camera.position.set(0, 1.05, 6.2);
+
+      // Lights (warm studio)
+      const ambient = new THREE.AmbientLight(0xffffff, 0.38);
+      scene.add(ambient);
+
+      const key = new THREE.SpotLight(0xffd8a8, 1.7, 40, Math.PI/7, 0.35, 1);
+      key.position.set(3.2, 6.0, 5.5);
+      scene.add(key);
+
+      const fill = new THREE.PointLight(0xffffff, 0.42, 30);
+      fill.position.set(-3.5, 1.0, 4.5);
+      scene.add(fill);
+
+      const rim = new THREE.PointLight(0xffe6bd, 0.55, 30);
+      rim.position.set(-4.0, 3.0, -3.5);
+      scene.add(rim);
+
+      // Soft panel behind
+      const back = new THREE.Mesh(
+        new THREE.PlaneGeometry(9, 6),
+        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent:true, opacity: 0.06 })
+      );
+      back.position.set(0, 1.1, -2.1);
+      scene.add(back);
+
+      // Ground shadow disc
+      const shadow = new THREE.Mesh(
+        new THREE.CircleGeometry(2.25, 64),
+        new THREE.MeshStandardMaterial({ color: 0x0b0907, metalness: 0.05, roughness: 0.95 })
+      );
+      shadow.rotation.x = -Math.PI/2;
+      shadow.position.y = -1.18;
+      scene.add(shadow);
+
+      const group = new THREE.Group();
+      scene.add(group);
+
+      // Ceramic materials
+      const ceramic = new THREE.MeshPhysicalMaterial({
+        color: 0xf3eee2,
+        metalness: 0.02,
+        roughness: 0.28,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.08,
+        sheen: 0.6,
+        sheenRoughness: 0.7,
+        reflectivity: 0.7,
+      });
+
+      const ceramicInner = new THREE.MeshPhysicalMaterial({
+        color: 0xf7f2e8,
+        metalness: 0.01,
+        roughness: 0.34,
+        clearcoat: 0.9,
+        clearcoatRoughness: 0.10,
+        reflectivity: 0.55,
+      });
+
+      // Mug outer
+      const mugOuter = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.92, 1.02, 2.05, 96, 1, true),
+        ceramic
+      );
+      mugOuter.position.y = 0.0;
+      group.add(mugOuter);
+
+      // Bottom cap
+      const mugBottom = new THREE.Mesh(
+        new THREE.CircleGeometry(1.02, 96),
+        ceramic
+      );
+      mugBottom.rotation.x = -Math.PI/2;
+      mugBottom.position.y = -1.025;
+      group.add(mugBottom);
+
+      // Inner wall
+      const mugInner = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.78, 0.88, 1.75, 96, 1, true),
+        ceramicInner
+      );
+      mugInner.position.y = 0.12;
+      group.add(mugInner);
+
+      // Rim ring highlight
+      const rimRing = new THREE.Mesh(
+        new THREE.TorusGeometry(0.91, 0.05, 18, 120),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.02,
+          roughness: 0.12,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.05,
+          reflectivity: 0.9
+        })
+      );
+      rimRing.rotation.x = Math.PI/2;
+      rimRing.position.y = 1.0;
+      group.add(rimRing);
+
+      // Handle
+      const handle = new THREE.Mesh(
+        new THREE.TorusGeometry(0.48, 0.095, 18, 80),
+        ceramic
+      );
+      handle.position.set(1.03, 0.15, 0);
+      handle.rotation.y = Math.PI/2;
+      handle.rotation.z = Math.PI/2;
+      group.add(handle);
+
+      // Saucer (premium)
+      const saucer = new THREE.Mesh(
+        new THREE.CylinderGeometry(1.55, 1.75, 0.18, 96),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xf2ede2,
+          metalness: 0.01,
+          roughness: 0.34,
+          clearcoat: 0.9,
+          clearcoatRoughness: 0.10,
+          reflectivity: 0.6
+        })
+      );
+      saucer.position.y = -1.16;
+      group.add(saucer);
+
+      // Saucer inner groove
+      const groove = new THREE.Mesh(
+        new THREE.TorusGeometry(1.15, 0.06, 14, 100),
+        new THREE.MeshPhysicalMaterial({
+          color: 0xffffff,
+          metalness: 0.01,
+          roughness: 0.22,
+          clearcoat: 1.0,
+          clearcoatRoughness: 0.06,
+          reflectivity: 0.75
+        })
+      );
+      groove.rotation.x = Math.PI/2;
+      groove.position.y = -1.07;
+      group.add(groove);
+
+      // Liquid surface (changes by mode)
+      const liquidMat = new THREE.MeshPhysicalMaterial({
+        color: 0x4bbf7a,   // matcha default
+        metalness: 0.0,
+        roughness: 0.18,
+        transmission: 0.08,
+        thickness: 0.6,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.05,
+        reflectivity: 0.8,
+      });
+      const liquid = new THREE.Mesh(
+        new THREE.CircleGeometry(0.84, 96),
+        liquidMat
+      );
+      liquid.rotation.x = -Math.PI/2;
+      liquid.position.y = 0.86; // near rim
+      group.add(liquid);
+
+      // Tiny foam ring (subtle)
+      const foamMat = new THREE.MeshPhysicalMaterial({
+        color: 0xffffff,
+        metalness: 0.0,
+        roughness: 0.55,
+        clearcoat: 0.6,
+        clearcoatRoughness: 0.25,
+        opacity: 0.55,
+        transparent: true
+      });
+      const foam = new THREE.Mesh(
+        new THREE.TorusGeometry(0.79, 0.045, 12, 90),
+        foamMat
+      );
+      foam.rotation.x = Math.PI/2;
+      foam.position.y = 0.865;
+      group.add(foam);
+
+      // Resize
+      function resize(){
+        const rect = canvas.getBoundingClientRect();
+        const w = Math.max(1, rect.width);
+        const h = Math.max(1, rect.height);
+        renderer.setSize(w, h, false);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      }
+      window.addEventListener("resize", resize);
+      resize();
+
+      // Mouse tilt
+      let tx=0, ty=0, mx=0, my=0;
+      const wrap = document.getElementById("threeWrap");
+      wrap.addEventListener("mousemove", (e) => {
+        const r = wrap.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        tx = x; ty = y;
+      });
+      wrap.addEventListener("mouseleave", () => { tx=0; ty=0; });
+
+      // Theme function callable from toggles
+      window.__THREE_THEME__ = (drink, venue) => {
+        const isCoffee = drink === "coffee";
+
+        // Liquid + foam vibe
+        if (isCoffee){
+          liquidMat.color.setHex(0x6b3e1f);      // espresso
+          foamMat.opacity = 0.65;
+          foamMat.color.setHex(0xf2d8b6);       // crema ring
+        } else {
+          liquidMat.color.setHex(0x3fbf86);      // jade matcha
+          foamMat.opacity = 0.50;
+          foamMat.color.setHex(0xffffff);
+        }
+
+        // Lighting shift by venue
+        if (venue === "lounge"){
+          key.color.setHex(0xffd0a6);
+          key.intensity = 1.55;
+          ambient.intensity = 0.34;
+          rim.intensity = 0.65;
+        } else {
+          key.color.setHex(0xffd8a8);
+          key.intensity = 1.7;
+          ambient.intensity = 0.38;
+          rim.intensity = 0.55;
+        }
+      };
+
+      // Initial theme
+      window.__THREE_THEME__(document.body.getAttribute("data-drink"), document.body.getAttribute("data-venue"));
+
+      // Render loop
+      function tick(){
+        mx += (tx - mx) * 0.06;
+        my += (ty - my) * 0.06;
+
+        group.rotation.y = mx * 0.55;
+        group.rotation.x = -my * 0.25;
+
+        // Gentle idle motion
+        group.position.y = Math.sin(Date.now() * 0.0012) * 0.02;
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(tick);
+      }
+      tick();
+    }
+
+    async function boot(){
+      const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+      const lowPowerMode = window.matchMedia("(prefers-reduced-motion: reduce)").matches || Boolean(connection && connection.saveData);
+
+      const okGsap = lowPowerMode ? false : await loadScriptAny([
+        "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"
+      ]);
+      const okST = lowPowerMode ? false : await loadScriptAny([
+        "https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js",
+        "https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"
+      ]);
+      const okLenis = lowPowerMode ? false : await loadScriptAny([
+        "https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/bundled/lenis.min.js",
+        "https://unpkg.com/@studio-freight/lenis@1.0.42/bundled/lenis.min.js"
+      ]);
+      const okThree = lowPowerMode ? false : await loadThreeModuleAny([
+        "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "https://unpkg.com/three@0.160.0/build/three.module.js"
+      ]);
+
+      if (!okGsap || !okThree) $("cdnError").style.display = "block";
+
+      $("year").textContent = new Date().getFullYear();
+
+      $("waBtn").href = `https://wa.me/${APP_CONFIG.whatsappNumber}?text=${encodeURIComponent("Hi NOFFELO, I want to reserve a table.")}`;
+
+      setVenue("cafe");
+      setDrink("matcha");
+      initHeroParallax();
+
+      $("venueBtn").addEventListener("click", () => {
+        const cur = document.body.getAttribute("data-venue");
+        setVenue(cur === "cafe" ? "lounge" : "cafe");
+        if (window.gsap) gsap.fromTo("#venueBtn", { scale: 0.96 }, { scale: 1, duration: 0.22, ease: "power2.out" });
+      });
+
+      $("drinkBtn").addEventListener("click", () => {
+        const cur = document.body.getAttribute("data-drink");
+        setDrink(cur === "matcha" ? "coffee" : "matcha");
+        if (window.gsap) gsap.fromTo("#drinkBtn", { scale: 0.96 }, { scale: 1, duration: 0.22, ease: "power2.out" });
+      });
+
+      const mobileMenuBtn = $("mobileMenuBtn");
+      const mobileNavPanel = $("mobileNavPanel");
+      const setMobileMenuState = (open) => {
+        if (!mobileNavPanel || !mobileMenuBtn) return;
+        mobileNavPanel.classList.toggle("open", open);
+        mobileNavPanel.setAttribute("aria-hidden", open ? "false" : "true");
+        mobileMenuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        mobileMenuBtn.classList.toggle("active", open);
+        mobileMenuBtn.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+        document.body.classList.toggle("menu-open", open);
+      };
+      const closeMobileMenu = () => { setMobileMenuState(false); };
+      const toggleMobileMenu = () => {
+        if (!mobileNavPanel || !mobileMenuBtn) return;
+        const open = !mobileNavPanel.classList.contains("open");
+        setMobileMenuState(open);
+      };
+
+      if (mobileMenuBtn) mobileMenuBtn.addEventListener("click", toggleMobileMenu);
+      document.querySelectorAll("[data-mobile-link]").forEach((el) => {
+        el.addEventListener("click", () => { closeMobileMenu(); });
+      });
+      window.addEventListener("resize", () => {
+        if (window.innerWidth > 900) closeMobileMenu();
+      });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeMobileMenu();
+      });
+
+      if ($("venueBtnMobile")) {
+        $("venueBtnMobile").addEventListener("click", () => {
+          const cur = document.body.getAttribute("data-venue");
+          setVenue(cur === "cafe" ? "lounge" : "cafe");
+        });
+      }
+      if ($("drinkBtnMobile")) {
+        $("drinkBtnMobile").addEventListener("click", () => {
+          const cur = document.body.getAttribute("data-drink");
+          setDrink(cur === "matcha" ? "coffee" : "matcha");
+        });
+      }
+
+      // Analytics hooks
+      document.querySelectorAll('a[href="#reserve"]').forEach((el) => {
+        el.addEventListener("click", () => {
+          trackEvent("reserve_cta_click", {
+            label: (el.textContent || "").trim() || "unknown",
+            section: el.closest("header, section, footer")?.id || "global"
+          });
+        });
+      });
+      $("waBtn").addEventListener("click", () => {
+        trackEvent("whatsapp_click", {
+          source: "floating_button"
+        });
+      });
+
+      $("closeReserveModalBtn")?.addEventListener("click", closeReserveModal);
+      $("reserveModal")?.addEventListener("click", (e) => {
+        if (e.target && e.target.id === "reserveModal") closeReserveModal();
+      });
+      $("copyRefBtn")?.addEventListener("click", async () => {
+        const ref = $("modalBookingRef")?.textContent?.trim() || "";
+        if (!ref || ref === "-") return;
+        try {
+          await navigator.clipboard.writeText(ref);
+          trackEvent("booking_ref_copied", { bookingRef: ref });
+          $("copyRefBtn").textContent = "Copied";
+          setTimeout(() => { $("copyRefBtn").textContent = "Copy Reference"; }, 1200);
+        } catch (e) {}
+      });
+      window.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") closeReserveModal();
+      });
+
+      initReservationForm();
+      initMenuFromJson();
+
+      // Preloader animation
+      const loadBar = $("loadBar");
+      const loadPct = $("loadPct");
+      const preloader = $("preloader");
+      let p = { v: 0 };
+
+      if (window.gsap) {
+        gsap.to(p, {
+          v: 100, duration: 1.35, ease: "power2.out",
+          onUpdate: () => {
+            const v = Math.round(p.v);
+            loadPct.textContent = v + "%";
+            loadBar.style.width = v + "%";
+          },
+          onComplete: () => {
+            gsap.to(preloader, { autoAlpha: 0, duration: 0.6, ease: "power2.out" });
+            setTimeout(() => { preloader.style.display="none"; }, 700);
+            cinematicReveals();
+          }
+        });
+      } else {
+        loadPct.textContent = "100%";
+        loadBar.style.width = "100%";
+        setTimeout(hidePreloaderSafely, 350);
+        cinematicReveals();
+      }
+
+      // Smooth scroll
+      if (window.Lenis) {
+        const lenis = new Lenis({ lerp: 0.075, wheelMultiplier: 0.85 });
+        function raf(time){ lenis.raf(time); requestAnimationFrame(raf); }
+        requestAnimationFrame(raf);
+      }
+
+      if (!lowPowerMode) {
+        initThreeAestheticMug();
+      }    }
+
+    boot();
+  </script>
+</body>
+</html>

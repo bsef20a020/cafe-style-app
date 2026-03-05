@@ -1,0 +1,5 @@
+.env
+config.runtime.js
+backend/data/
+__pycache__/
+*.pyc

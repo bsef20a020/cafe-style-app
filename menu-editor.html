@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOFFELO Menu Editor</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <style>
+    body{margin:0;background:#1d1511;color:#f0e2ce;font-family:system-ui,Segoe UI,Arial,sans-serif}
+    .wrap{max-width:1100px;margin:0 auto;padding:22px}
+    .card{background:#2b1f19;border:1px solid #5a412f;border-radius:14px;padding:14px;margin-top:12px}
+    input,button,textarea{font:inherit}
+    input,textarea{width:100%;padding:9px;border-radius:10px;border:1px solid #5a412f;background:#241914;color:#f0e2ce}
+    button{padding:9px 12px;border-radius:10px;border:1px solid #5a412f;background:#3b2a20;color:#f0e2ce;cursor:pointer}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+    .grid{display:grid;grid-template-columns:2fr 1fr 2fr 2fr 2fr auto;gap:8px;align-items:center}
+    .muted{color:#bfa98a}
+    @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>NOFFELO Menu Editor</h1>
+    <p class="muted">Edit menu rows and download updated <code>menu-data.json</code>.</p>
+
+    <div class="card row">
+      <button id="loadBtn">Load Current JSON</button>
+      <button id="addRowBtn">Add Item</button>
+      <button id="downloadBtn">Download menu-data.json</button>
+      <input id="importFile" type="file" accept="application/json" style="max-width:260px" />
+    </div>
+
+    <div class="card">
+      <div class="grid" style="font-weight:600">
+        <div>Name</div><div>Price</div><div>Description</div><div>Image URL</div><div>Alt</div><div>Action</div>
+      </div>
+      <div id="rows"></div>
+    </div>
+
+    <div class="card">
+      <div class="muted">Raw JSON Preview</div>
+      <textarea id="preview" rows="12" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    let ITEMS = [];
+
+    function el(tag, attrs = {}, html = "") {
+      const n = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v]) => n.setAttribute(k, v));
+      if (html) n.innerHTML = html;
+      return n;
+    }
+
+    function syncPreview(){
+      document.getElementById("preview").value = JSON.stringify({ items: ITEMS }, null, 2);
+    }
+
+    function render(){
+      const wrap = document.getElementById("rows");
+      wrap.innerHTML = "";
+      ITEMS.forEach((item, idx) => {
+        const row = el("div", { class: "grid", style: "margin-top:8px" });
+
+        const mk = (key) => {
+          const i = el("input");
+          i.value = item[key] || "";
+          i.addEventListener("input", () => {
+            ITEMS[idx][key] = i.value;
+            syncPreview();
+          });
+          return i;
+        };
+
+        row.appendChild(mk("name"));
+        row.appendChild(mk("price"));
+        row.appendChild(mk("desc"));
+        row.appendChild(mk("image"));
+        row.appendChild(mk("alt"));
+
+        const del = el("button", {}, "Delete");
+        del.addEventListener("click", () => {
+          ITEMS.splice(idx, 1);
+          render();
+        });
+        row.appendChild(del);
+        wrap.appendChild(row);
+      });
+      syncPreview();
+    }
+
+    async function loadCurrent(){
+      const res = await fetch("./menu-data.json", { cache: "no-store" });
+      const data = await res.json();
+      ITEMS = Array.isArray(data.items) ? data.items : [];
+      render();
+    }
+
+    document.getElementById("loadBtn").addEventListener("click", loadCurrent);
+    document.getElementById("addRowBtn").addEventListener("click", () => {
+      ITEMS.push({ name:"", price:"", desc:"", image:"", alt:"" });
+      render();
+    });
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+      const blob = new Blob([JSON.stringify({ items: ITEMS }, null, 2)], { type: "application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "menu-data.json";
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+    document.getElementById("importFile").addEventListener("change", async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      const txt = await f.text();
+      try {
+        const data = JSON.parse(txt);
+        ITEMS = Array.isArray(data.items) ? data.items : [];
+        render();
+      } catch {
+        alert("Invalid JSON file");
+      }
+    });
+
+    loadCurrent();
+  </script>
+</body>
+</html>

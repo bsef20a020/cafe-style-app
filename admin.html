@@ -1,0 +1,626 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NOFFELO Admin Dashboard</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <style>
+    :root{
+      --bg:#140f0d;
+      --panel:#211913;
+      --panel-2:#2b2019;
+      --line:#57402e;
+      --text:#f2e3cf;
+      --muted:#bca68a;
+      --accent:#c79564;
+      --ok:#7ec58d;
+      --bad:#cf7d7d;
+      --sidebar-bg:linear-gradient(180deg,#1f1712,#19120f);
+      --nav-btn-bg:#2a1f18;
+      --nav-btn-active:#3a2a20;
+      --nav-btn-active-line:#7a5a40;
+      --input-bg:#251b15;
+      --meter-bg:#1a130f;
+      --table-head-bg:#3a2a20;
+      --overlay-1:rgba(0,0,0,.12);
+      --overlay-2:rgba(0,0,0,.10);
+      --overlay-3:rgba(0,0,0,.08);
+    }
+    body[data-theme="light"]{
+      --bg:#f4ece2;
+      --panel:#fff9f1;
+      --panel-2:#fffdf9;
+      --line:#d2b89a;
+      --text:#2d2018;
+      --muted:#7c644f;
+      --accent:#9f6c3f;
+      --ok:#347f4a;
+      --bad:#a94c4c;
+      --sidebar-bg:linear-gradient(180deg,#efe3d5,#e7d8c6);
+      --nav-btn-bg:#f7ebdd;
+      --nav-btn-active:#efd8bf;
+      --nav-btn-active-line:#b9885b;
+      --input-bg:#fff7ef;
+      --meter-bg:#efe2d3;
+      --table-head-bg:#f1dcc7;
+      --overlay-1:rgba(159,108,63,.08);
+      --overlay-2:rgba(159,108,63,.06);
+      --overlay-3:rgba(159,108,63,.07);
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Segoe UI,Arial,sans-serif}
+    button,input,select{font:inherit}
+    .app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+
+    .sidebar{border-right:1px solid var(--line);background:var(--sidebar-bg);padding:18px;position:sticky;top:0;height:100vh}
+    .brand{font-size:20px;font-weight:700;letter-spacing:.02em}
+    .brandSub{font-size:12px;color:var(--muted);margin-top:4px}
+    .nav{margin-top:16px;display:grid;gap:8px}
+    .nav button{width:100%;text-align:left;border:1px solid var(--line);background:var(--nav-btn-bg);color:var(--text);padding:10px 12px;border-radius:10px;cursor:pointer}
+    .nav button.active{background:var(--nav-btn-active);border-color:var(--nav-btn-active-line)}
+    .sidebarFooter{position:absolute;left:18px;right:18px;bottom:18px;color:var(--muted);font-size:12px}
+
+    .main{padding:20px}
+    .topbar{display:flex;justify-content:space-between;gap:12px;align-items:center;flex-wrap:wrap}
+    .title h1{margin:0;font-size:28px}
+    .title p{margin:6px 0 0;color:var(--muted)}
+    .chip{border:1px solid var(--line);background:var(--panel);padding:8px 10px;border-radius:999px;color:var(--muted);font-size:12px}
+    .chipBtn{border:1px solid var(--line);background:var(--panel);padding:8px 10px;border-radius:999px;color:var(--muted);font-size:12px;cursor:pointer}
+
+    .auth{margin-top:14px;border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .auth input,.auth button,.card input,.card select,.card button{border:1px solid var(--line);background:var(--input-bg);color:var(--text);border-radius:10px;padding:10px}
+    .auth input,.card input,.card select{width:100%}
+    .auth input{max-width:320px}
+    .auth button,.card button{cursor:pointer}
+
+    .view{display:none;margin-top:14px}
+    .view.active{display:block}
+    .grid{display:grid;gap:12px}
+    .grid.kpi{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+    .card{border:1px solid var(--line);background:var(--panel);border-radius:14px;padding:14px}
+    .card h3{margin:0 0 10px}
+    .metric .label{font-size:12px;color:var(--muted)}
+    .metric .value{font-size:28px;font-weight:700;margin-top:8px}
+    .muted{color:var(--muted)}
+    .ok{color:var(--ok)}
+
+    .meter{height:12px;border:1px solid var(--line);border-radius:999px;background:var(--meter-bg);overflow:hidden}
+    .meter span{display:block;height:100%;width:0;background:linear-gradient(90deg,#a9784f,#d2a272)}
+
+    .splitRow{display:flex;align-items:center;gap:10px;margin-top:10px}
+    .splitLabel{width:130px;color:var(--muted);font-size:13px}
+    .splitBar{flex:1;height:10px;border-radius:999px;border:1px solid var(--line);background:var(--meter-bg);overflow:hidden}
+    .splitBar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#8f6a47,#c69662)}
+
+    .tableWrap{overflow:auto;border:1px solid var(--line);border-radius:12px}
+    table{width:100%;border-collapse:collapse;background:var(--panel-2)}
+    th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;font-size:13px;white-space:nowrap;vertical-align:top}
+    th{position:sticky;top:0;background:var(--table-head-bg);z-index:1}
+
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    .actions button{padding:9px 12px}
+    .statusSummary{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .statusPill{border:1px solid var(--line);border-radius:999px;padding:5px 10px;font-size:12px;color:var(--muted);background:var(--overlay-1)}
+    .statusPill.pending{color:#d8b67c}
+    .statusPill.confirmed{color:var(--ok)}
+    .statusPill.cancelled{color:var(--bad)}
+    .actionLink{
+      display:inline-block;
+      border:1px solid var(--line);
+      border-radius:8px;
+      padding:5px 8px;
+      font-size:12px;
+      color:var(--text);
+      background:var(--overlay-2);
+      text-decoration:none;
+    }
+    .actionLink:hover{filter:brightness(1.08)}
+    .statusBadge{
+      display:inline-block;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:11px;
+      color:var(--muted);
+      background:var(--overlay-3);
+    }
+    .statusBadge.pending{color:#d8b67c}
+    .statusBadge.confirmed{color:var(--ok)}
+    .statusBadge.cancelled{color:var(--bad)}
+    .pager{
+      margin-top:10px;
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .inlineInput{display:grid;gap:6px}
+
+    @media (max-width: 1050px){
+      .app{grid-template-columns:1fr}
+      .sidebar{position:relative;height:auto;border-right:none;border-bottom:1px solid var(--line)}
+      .sidebarFooter{position:static;margin-top:12px}
+      .grid.kpi,.grid.two,.grid.three{grid-template-columns:1fr}
+    }
+  </style>
+  <script>
+    (function loadRuntimeConfig(){
+      const s = document.createElement("script");
+      s.src = "./config.runtime.js";
+      s.defer = true;
+      s.onerror = function(){};
+      document.head.appendChild(s);
+    })();
+  </script>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">NOFFELO Admin</div>
+      <div class="brandSub">Operations Dashboard</div>
+      <div class="nav">
+        <button data-view-target="overviewView" class="active">Overview</button>
+        <button data-view-target="reservationsView">Reservations</button>
+        <button data-view-target="eventsView">Events</button>
+        <button data-view-target="integrationsView">Integrations</button>
+      </div>
+      <div class="sidebarFooter">
+        Keep `ADMIN_PASSWORD` private and rotate keys regularly.
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="title">
+          <h1>Dashboard</h1>
+          <p>Track conversions, reservations, and engagement in one place.</p>
+        </div>
+        <div class="row">
+          <button id="themeToggleBtn" class="chipBtn" type="button">Theme: Dark</button>
+          <div class="chip" id="lastRenderAt">Not loaded</div>
+        </div>
+      </div>
+
+      <section class="auth" id="authBox">
+        <label for="adminPass">Admin Password</label>
+        <div class="row" style="margin-top:8px">
+          <input id="adminPass" type="password" placeholder="Enter password" />
+          <button id="unlockBtn">Unlock Dashboard</button>
+        </div>
+        <p class="muted" style="margin:10px 0 0">Set a strong password in code via <code>ADMIN_PASSWORD</code> before production.</p>
+      </section>
+
+      <section id="panel" style="display:none">
+        <div id="overviewView" class="view active">
+          <div class="grid kpi">
+            <div class="card metric"><div class="label">Reserve CTA Clicks</div><div class="value" id="kpiReserveClicks">0</div></div>
+            <div class="card metric"><div class="label">WhatsApp Clicks</div><div class="value" id="kpiWhatsApp">0</div></div>
+            <div class="card metric"><div class="label">Successful Submits</div><div class="value" id="kpiSuccess">0</div></div>
+            <div class="card metric"><div class="label">Reservations Stored</div><div class="value" id="kpiReservations">0</div></div>
+          </div>
+          <div class="grid two" style="margin-top:12px">
+            <div class="card">
+              <h3>Conversion</h3>
+              <p id="conversionText" class="muted">No data</p>
+              <div class="meter"><span id="conversionBar"></span></div>
+              <div class="statusSummary">
+                <div class="statusPill pending">Pending: <span id="statusPendingCount">0</span></div>
+                <div class="statusPill confirmed">Confirmed: <span id="statusConfirmedCount">0</span></div>
+                <div class="statusPill cancelled">Cancelled: <span id="statusCancelledCount">0</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <h3>Venue Split</h3>
+              <div class="splitRow"><div class="splitLabel">Café</div><div class="splitBar"><span id="venueCafeBar"></span></div><div id="venueCafeCount">0</div></div>
+              <div class="splitRow"><div class="splitLabel">Evening Lounge</div><div class="splitBar"><span id="venueLoungeBar"></span></div><div id="venueLoungeCount">0</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="reservationsView" class="view">
+          <div class="card">
+            <h3>Reservation Filters</h3>
+            <div class="grid three">
+              <div class="inlineInput"><label for="filterDateFrom">Date From</label><input id="filterDateFrom" type="date" /></div>
+              <div class="inlineInput"><label for="filterDateTo">Date To</label><input id="filterDateTo" type="date" /></div>
+              <div class="inlineInput">
+                <label for="filterVenue">Venue</label>
+                <select id="filterVenue">
+                  <option value="">All</option>
+                  <option value="Café">Café</option>
+                  <option value="Evening Lounge">Evening Lounge</option>
+                </select>
+              </div>
+            </div>
+            <div class="grid three" style="margin-top:10px">
+              <div class="inlineInput">
+                <label for="filterStatus">Status</label>
+                <select id="filterStatus">
+                  <option value="">All</option>
+                  <option value="pending">Pending</option>
+                  <option value="confirmed">Confirmed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+            </div>
+            <div class="actions" style="margin-top:10px">
+              <button id="applyFilterBtn">Apply Filters</button>
+              <button id="resetFilterBtn">Reset Filters</button>
+              <button id="exportReservationsBtn">Export Reservations CSV</button>
+            </div>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <h3>Reservations</h3>
+            <div class="tableWrap">
+              <table>
+                <thead><tr><th>Ref</th><th>Name</th><th>Phone</th><th>Venue</th><th>Guests</th><th>Date</th><th>Time</th><th>Status</th><th>Occasion</th><th>TS</th><th>Action</th></tr></thead>
+                <tbody id="reservationRows"></tbody>
+              </table>
+            </div>
+            <div class="pager">
+              <button id="reservationsPrevBtn" type="button">Prev</button>
+              <button id="reservationsNextBtn" type="button">Next</button>
+              <span id="reservationsPageInfo" class="muted">Page 1 / 1</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="eventsView" class="view">
+          <div class="card">
+            <h3>Event Controls</h3>
+            <div class="grid two">
+              <div class="inlineInput"><label for="eventSearch">Search Events</label><input id="eventSearch" placeholder="e.g. reservation_submit_success" /></div>
+              <div class="inlineInput"><label>&nbsp;</label><div class="actions"><button id="applyEventSearchBtn">Apply Search</button><button id="clearEventSearchBtn">Clear</button><button id="exportEventsBtn">Export Events CSV</button></div></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:12px">
+            <h3>Recent Events</h3>
+            <div class="tableWrap">
+              <table>
+                <thead><tr><th>Event</th><th>Page</th><th>Details</th><th>TS</th></tr></thead>
+                <tbody id="eventRows"></tbody>
+              </table>
+            </div>
+            <div class="pager">
+              <button id="eventsPrevBtn" type="button">Prev</button>
+              <button id="eventsNextBtn" type="button">Next</button>
+              <span id="eventsPageInfo" class="muted">Page 1 / 1</span>
+            </div>
+          </div>
+        </div>
+
+        <div id="integrationsView" class="view">
+          <div class="card">
+            <h3>Backend Sync</h3>
+            <div class="grid two">
+              <div class="inlineInput"><label for="backendUrl">Backend Endpoint</label><input id="backendUrl" placeholder="https://... or http://127.0.0.1:8787/admin/list" /></div>
+              <div class="inlineInput"><label for="backendKey">Admin Key</label><input id="backendKey" placeholder="your-admin-key" /></div>
+            </div>
+            <div class="actions" style="margin-top:10px">
+              <button id="pullBtn">Pull Backend Data</button>
+              <button id="refreshLocalBtn">Refresh Local Data</button>
+              <span id="pullStatus" class="muted"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const ADMIN_PASSWORD = (window.__NOFFELO_ADMIN_PASSWORD__ || "admin123!");
+    const ANALYTICS_KEY = "noffelo_analytics_events";
+    const RESERVATION_KEY = "noffelo_reservations";
+    const RESERVATION_STATUS_KEY = "noffelo_reservation_status_map";
+    const ADMIN_BACKEND_URL_KEY = "noffelo_admin_backend_url";
+    const ADMIN_BACKEND_KEY_KEY = "noffelo_admin_backend_key";
+    const ADMIN_THEME_KEY = "noffelo_admin_theme";
+    const PAGE_SIZE = 12;
+    const BUSINESS_WHATSAPP = "923085233717";
+
+    let STATE = { events: [], reservations: [] };
+    const PAGE = { reservations: 1, events: 1 };
+
+    function fmt(v){ return v == null ? "-" : String(v); }
+    function html(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+    function readLocalData(){
+      const events = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || "[]");
+      const reservations = JSON.parse(localStorage.getItem(RESERVATION_KEY) || "[]");
+      return { events, reservations };
+    }
+
+    function getTheme(){
+      return localStorage.getItem(ADMIN_THEME_KEY) || "dark";
+    }
+
+    function setTheme(theme){
+      const finalTheme = theme === "light" ? "light" : "dark";
+      document.body.setAttribute("data-theme", finalTheme);
+      localStorage.setItem(ADMIN_THEME_KEY, finalTheme);
+      const btn = document.getElementById("themeToggleBtn");
+      if (btn) btn.textContent = `Theme: ${finalTheme === "light" ? "Light" : "Dark"}`;
+    }
+
+    function getStatusMap(){
+      try { return JSON.parse(localStorage.getItem(RESERVATION_STATUS_KEY) || "{}"); }
+      catch { return {}; }
+    }
+
+    function getReservationKey(r){
+      return String(r.bookingRef || `${r.name || ""}|${r.phone || ""}|${r.date || ""}|${r.time || ""}`);
+    }
+
+    function getReservationStatus(r){
+      const statusMap = getStatusMap();
+      return statusMap[getReservationKey(r)] || "pending";
+    }
+
+    function setReservationStatus(r, status){
+      const allowed = ["pending", "confirmed", "cancelled"];
+      const next = allowed.includes(status) ? status : "pending";
+      const map = getStatusMap();
+      map[getReservationKey(r)] = next;
+      localStorage.setItem(RESERVATION_STATUS_KEY, JSON.stringify(map));
+    }
+
+    function paginate(rows, page){
+      const totalPages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+      const safePage = Math.min(Math.max(page, 1), totalPages);
+      const start = (safePage - 1) * PAGE_SIZE;
+      return { page: safePage, totalPages, slice: rows.slice(start, start + PAGE_SIZE) };
+    }
+
+    function buildFollowupLink(r){
+      const msg = [
+        "Hi, following up on your NOFFELO reservation.",
+        `Booking Ref: ${r.bookingRef || "-"}`,
+        `Name: ${r.name || "-"}`,
+        `Venue: ${r.venue || "-"}`,
+        `Guests: ${r.guests || "-"}`,
+        `Date: ${r.date || "-"}`,
+        `Time: ${r.time || "-"}`,
+        `Status: ${getReservationStatus(r)}`
+      ].join("\\n");
+      return `https://wa.me/${BUSINESS_WHATSAPP}?text=${encodeURIComponent(msg)}`;
+    }
+
+    function toCsv(rows){
+      if (!rows.length) return "";
+      const headers = Object.keys(rows[0]);
+      const esc = (v) => {
+        const s = String(v ?? "");
+        return /[",\n]/.test(s) ? `"${s.replaceAll('"', '""')}"` : s;
+      };
+      return [headers.join(","), ...rows.map(r => headers.map(h => esc(r[h])).join(","))].join("\n");
+    }
+
+    function downloadCsv(filename, rows){
+      const csv = toCsv(rows);
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    }
+
+    function getFilteredReservations(reservations){
+      const from = document.getElementById("filterDateFrom")?.value || "";
+      const to = document.getElementById("filterDateTo")?.value || "";
+      const venue = document.getElementById("filterVenue")?.value || "";
+      const status = document.getElementById("filterStatus")?.value || "";
+      return reservations.filter((r) => {
+        if (venue && String(r.venue || "") !== venue) return false;
+        if (from && String(r.date || "") < from) return false;
+        if (to && String(r.date || "") > to) return false;
+        if (status && getReservationStatus(r) !== status) return false;
+        return true;
+      });
+    }
+
+    function getFilteredEvents(events){
+      const term = (document.getElementById("eventSearch")?.value || "").trim().toLowerCase();
+      if (!term) return events;
+      return events.filter((e) => JSON.stringify(e).toLowerCase().includes(term));
+    }
+
+    function renderKpis(events, reservations){
+      const reserveClicks = events.filter(e => e.event === "reserve_cta_click").length;
+      const waClicks = events.filter(e => e.event === "whatsapp_click").length;
+      const success = events.filter(e => e.event === "reservation_submit_success").length;
+      const confirmed = reservations.filter(r => getReservationStatus(r) === "confirmed").length;
+      const pending = reservations.filter(r => getReservationStatus(r) === "pending").length;
+      const cancelled = reservations.filter(r => getReservationStatus(r) === "cancelled").length;
+
+      document.getElementById("kpiReserveClicks").textContent = String(reserveClicks);
+      document.getElementById("kpiWhatsApp").textContent = String(waClicks);
+      document.getElementById("kpiSuccess").textContent = String(confirmed || success);
+      document.getElementById("kpiReservations").textContent = String(reservations.length);
+      document.getElementById("statusPendingCount").textContent = String(pending);
+      document.getElementById("statusConfirmedCount").textContent = String(confirmed);
+      document.getElementById("statusCancelledCount").textContent = String(cancelled);
+
+      const cvr = reserveClicks ? (success / reserveClicks) * 100 : 0;
+      document.getElementById("conversionText").innerHTML =
+        `Conversion: <strong class="ok">${cvr.toFixed(1)}%</strong> <span class="muted">(${success} / ${reserveClicks})</span>`;
+      document.getElementById("conversionBar").style.width = `${Math.min(cvr, 100)}%`;
+
+      const cafe = reservations.filter(r => String(r.venue || "") === "Café").length;
+      const lounge = reservations.filter(r => String(r.venue || "") === "Evening Lounge").length;
+      const total = Math.max(cafe + lounge, 1);
+      document.getElementById("venueCafeCount").textContent = String(cafe);
+      document.getElementById("venueLoungeCount").textContent = String(lounge);
+      document.getElementById("venueCafeBar").style.width = `${(cafe / total) * 100}%`;
+      document.getElementById("venueLoungeBar").style.width = `${(lounge / total) * 100}%`;
+    }
+
+    function renderTables(events, reservations){
+      const pr = paginate(reservations, PAGE.reservations);
+      PAGE.reservations = pr.page;
+      const pe = paginate(events, PAGE.events);
+      PAGE.events = pe.page;
+
+      const rRows = document.getElementById("reservationRows");
+      rRows.innerHTML = pr.slice.slice().reverse().map(r => `
+        <tr>
+          <td>${html(fmt(r.bookingRef))}</td>
+          <td>${html(fmt(r.name))}</td>
+          <td>${html(fmt(r.phone))}</td>
+          <td>${html(fmt(r.venue))}</td>
+          <td>${html(fmt(r.guests))}</td>
+          <td>${html(fmt(r.date))}</td>
+          <td>${html(fmt(r.time))}</td>
+          <td>
+            <div class="statusBadge ${html(getReservationStatus(r))}">${html(getReservationStatus(r))}</div>
+            <select data-status-key="${html(getReservationKey(r))}" class="statusSelect" style="margin-top:6px">
+              <option value="pending" ${getReservationStatus(r)==="pending"?"selected":""}>Pending</option>
+              <option value="confirmed" ${getReservationStatus(r)==="confirmed"?"selected":""}>Confirmed</option>
+              <option value="cancelled" ${getReservationStatus(r)==="cancelled"?"selected":""}>Cancelled</option>
+            </select>
+          </td>
+          <td>${html(fmt(r.occasion))}</td>
+          <td>${html(fmt(r.ts))}</td>
+          <td>
+            <a class="actionLink" target="_blank" rel="noopener noreferrer" href="${html(buildFollowupLink(r))}">WhatsApp Follow-up</a>
+          </td>
+        </tr>
+      `).join("") || `<tr><td colspan="11" class="muted">No reservations found</td></tr>`;
+      document.getElementById("reservationsPageInfo").textContent = `Page ${pr.page} / ${pr.totalPages}`;
+      document.getElementById("reservationsPrevBtn").disabled = pr.page <= 1;
+      document.getElementById("reservationsNextBtn").disabled = pr.page >= pr.totalPages;
+
+      const eRows = document.getElementById("eventRows");
+      eRows.innerHTML = pe.slice.slice().reverse().map(e => `
+        <tr>
+          <td>${html(fmt(e.event))}</td>
+          <td>${html(fmt(e.page))}</td>
+          <td>${html(JSON.stringify(e))}</td>
+          <td>${html(fmt(e.ts))}</td>
+        </tr>
+      `).join("") || `<tr><td colspan="4" class="muted">No events found</td></tr>`;
+      document.getElementById("eventsPageInfo").textContent = `Page ${pe.page} / ${pe.totalPages}`;
+      document.getElementById("eventsPrevBtn").disabled = pe.page <= 1;
+      document.getElementById("eventsNextBtn").disabled = pe.page >= pe.totalPages;
+
+      document.querySelectorAll(".statusSelect").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const key = sel.getAttribute("data-status-key") || "";
+          const map = getStatusMap();
+          map[key] = sel.value;
+          localStorage.setItem(RESERVATION_STATUS_KEY, JSON.stringify(map));
+          render();
+        });
+      });
+    }
+
+    function render(){
+      const filteredReservations = getFilteredReservations(STATE.reservations);
+      const filteredEvents = getFilteredEvents(STATE.events);
+      renderKpis(STATE.events, STATE.reservations);
+      renderTables(filteredEvents, filteredReservations);
+      document.getElementById("lastRenderAt").textContent = `Last refreshed: ${new Date().toLocaleString()}`;
+    }
+
+    async function pullBackend(){
+      const status = document.getElementById("pullStatus");
+      const url = document.getElementById("backendUrl").value.trim();
+      const key = document.getElementById("backendKey").value.trim();
+      if (!url || !key) { status.textContent = "Enter backend URL and admin key."; return; }
+      status.textContent = "Pulling...";
+      try {
+        localStorage.setItem(ADMIN_BACKEND_URL_KEY, url);
+        localStorage.setItem(ADMIN_BACKEND_KEY_KEY, key);
+        const endpoint = url.includes("mode=list")
+          ? `${url}&key=${encodeURIComponent(key)}`
+          : (url.includes("/admin/list") ? `${url}?key=${encodeURIComponent(key)}` : `${url}?mode=list&key=${encodeURIComponent(key)}`);
+
+        const res = await fetch(endpoint);
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        const data = await res.json();
+        if (Array.isArray(data.events)) localStorage.setItem(ANALYTICS_KEY, JSON.stringify(data.events));
+        if (Array.isArray(data.reservations)) localStorage.setItem(RESERVATION_KEY, JSON.stringify(data.reservations));
+
+        STATE = readLocalData();
+        render();
+        status.textContent = "Pulled latest data successfully.";
+      } catch (e) {
+        status.textContent = "Pull failed. Check endpoint/key/CORS.";
+      }
+    }
+
+    function activateView(viewId){
+      document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === viewId));
+      document.querySelectorAll(".nav button").forEach(b => b.classList.toggle("active", b.dataset.viewTarget === viewId));
+    }
+
+    function initDashboard(){
+      document.getElementById("backendUrl").value = localStorage.getItem(ADMIN_BACKEND_URL_KEY) || "";
+      document.getElementById("backendKey").value = localStorage.getItem(ADMIN_BACKEND_KEY_KEY) || "";
+      STATE = readLocalData();
+      setTheme(getTheme());
+      render();
+    }
+
+    setTheme(getTheme());
+
+    document.querySelectorAll(".nav button[data-view-target]").forEach(btn => {
+      btn.addEventListener("click", () => activateView(btn.dataset.viewTarget));
+    });
+
+    document.getElementById("unlockBtn").addEventListener("click", () => {
+      const pass = document.getElementById("adminPass").value;
+      if (ADMIN_PASSWORD === "change-me-admin-password") {
+        alert("Please change ADMIN_PASSWORD in admin.html before using this dashboard.");
+        return;
+      }
+      if (pass !== ADMIN_PASSWORD) return;
+      document.getElementById("authBox").style.display = "none";
+      document.getElementById("panel").style.display = "block";
+      initDashboard();
+    });
+
+    document.getElementById("pullBtn").addEventListener("click", pullBackend);
+    document.getElementById("refreshLocalBtn").addEventListener("click", () => { STATE = readLocalData(); render(); });
+    document.getElementById("applyFilterBtn").addEventListener("click", render);
+    document.getElementById("resetFilterBtn").addEventListener("click", () => {
+      document.getElementById("filterDateFrom").value = "";
+      document.getElementById("filterDateTo").value = "";
+      document.getElementById("filterVenue").value = "";
+      document.getElementById("filterStatus").value = "";
+      PAGE.reservations = 1;
+      render();
+    });
+    document.getElementById("applyEventSearchBtn").addEventListener("click", render);
+    document.getElementById("clearEventSearchBtn").addEventListener("click", () => {
+      document.getElementById("eventSearch").value = "";
+      PAGE.events = 1;
+      render();
+    });
+    document.getElementById("filterDateFrom").addEventListener("change", () => { PAGE.reservations = 1; });
+    document.getElementById("filterDateTo").addEventListener("change", () => { PAGE.reservations = 1; });
+    document.getElementById("filterVenue").addEventListener("change", () => { PAGE.reservations = 1; });
+    document.getElementById("filterStatus").addEventListener("change", () => { PAGE.reservations = 1; });
+    document.getElementById("eventSearch").addEventListener("input", () => { PAGE.events = 1; });
+    document.getElementById("reservationsPrevBtn").addEventListener("click", () => { PAGE.reservations -= 1; render(); });
+    document.getElementById("reservationsNextBtn").addEventListener("click", () => { PAGE.reservations += 1; render(); });
+    document.getElementById("eventsPrevBtn").addEventListener("click", () => { PAGE.events -= 1; render(); });
+    document.getElementById("eventsNextBtn").addEventListener("click", () => { PAGE.events += 1; render(); });
+    document.getElementById("themeToggleBtn").addEventListener("click", () => {
+      setTheme(getTheme() === "dark" ? "light" : "dark");
+    });
+
+    document.getElementById("exportReservationsBtn").addEventListener("click", () => {
+      downloadCsv("noffelo_reservations.csv", getFilteredReservations(STATE.reservations));
+    });
+    document.getElementById("exportEventsBtn").addEventListener("click", () => {
+      downloadCsv("noffelo_analytics_events.csv", getFilteredEvents(STATE.events));
+    });
+  </script>
+</body>
+</html>
