@@ -6,19 +6,19 @@ cd "$ROOT_DIR"
 
 fail=0
 
-echo "[1/5] Checking admin password placeholder..."
-if rg -n "change-me-admin-password" admin.html >/dev/null; then
-  if [[ -f config.runtime.js ]] && rg -n '__NOFFELO_ADMIN_PASSWORD__\s*=\s*"[^"]+"' config.runtime.js >/dev/null; then
-    echo "OK: admin password is provided via config.runtime.js"
-  else
-    echo "ERROR: admin password still placeholder and config.runtime.js is missing/empty"
-    fail=1
-  fi
+echo "[1/5] Checking admin auth is server-side..."
+if rg -n "ADMIN_PASSWORD|__NOFFELO_ADMIN_PASSWORD__" admin.html >/dev/null; then
+  echo "ERROR: admin.html still contains client-side admin password references"
+  fail=1
 fi
 
 echo "[2/5] Checking env file exists..."
 if [[ ! -f .env ]]; then
   echo "ERROR: .env not found (copy from .env.example)"
+  fail=1
+fi
+if [[ -f .env ]] && ! rg -n "^NOFFELO_ADMIN_PASSWORD=" .env >/dev/null; then
+  echo "ERROR: NOFFELO_ADMIN_PASSWORD missing in .env"
   fail=1
 fi
 

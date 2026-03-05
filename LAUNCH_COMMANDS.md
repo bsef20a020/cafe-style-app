@@ -3,7 +3,7 @@
 ## 1) Prepare local secrets
 ```bash
 cp .env.example .env
-# edit .env with strong keys
+# edit .env with strong keys (ADMIN_KEY, ADMIN_PASSWORD, SESSION_SECRET, INGEST_TOKEN)
 ```
 
 ## 2) Start backend

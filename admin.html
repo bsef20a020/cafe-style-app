@@ -171,7 +171,7 @@
         <button data-view-target="integrationsView">Integrations</button>
       </div>
       <div class="sidebarFooter">
-        Keep `ADMIN_PASSWORD` private and rotate keys regularly.
+        Keep admin access server-side and rotate backend secrets regularly.
       </div>
     </aside>
 
@@ -183,17 +183,20 @@
         </div>
         <div class="row">
           <button id="themeToggleBtn" class="chipBtn" type="button">Theme: Dark</button>
+          <button id="logoutBtn" class="chipBtn" type="button" style="display:none">Logout</button>
           <div class="chip" id="lastRenderAt">Not loaded</div>
         </div>
       </div>
 
       <section class="auth" id="authBox">
-        <label for="adminPass">Admin Password</label>
+        <label for="loginBackendUrl">Backend URL</label>
+        <input id="loginBackendUrl" type="url" placeholder="https://your-backend-domain" />
+        <label for="adminPass" style="margin-top:10px;display:block">Admin Password</label>
         <div class="row" style="margin-top:8px">
           <input id="adminPass" type="password" placeholder="Enter password" />
-          <button id="unlockBtn">Unlock Dashboard</button>
+          <button id="unlockBtn" type="button">Login</button>
         </div>
-        <p class="muted" style="margin:10px 0 0">Set a strong password in code via <code>ADMIN_PASSWORD</code> before production.</p>
+        <p id="authStatus" class="muted" style="margin:10px 0 0">Login uses backend authentication with short-lived token.</p>
       </section>
 
       <section id="panel" style="display:none">
@@ -299,8 +302,7 @@
           <div class="card">
             <h3>Backend Sync</h3>
             <div class="grid two">
-              <div class="inlineInput"><label for="backendUrl">Backend Endpoint</label><input id="backendUrl" placeholder="https://... or http://127.0.0.1:8787/admin/list" /></div>
-              <div class="inlineInput"><label for="backendKey">Admin Key</label><input id="backendKey" placeholder="your-admin-key" /></div>
+              <div class="inlineInput"><label for="backendUrl">Backend Base URL</label><input id="backendUrl" placeholder="https://... or http://127.0.0.1:8787" /></div>
             </div>
             <div class="actions" style="margin-top:10px">
               <button id="pullBtn">Pull Backend Data</button>
@@ -314,21 +316,58 @@
   </div>
 
   <script>
-    const ADMIN_PASSWORD = (window.__NOFFELO_ADMIN_PASSWORD__ || "admin123!");
     const ANALYTICS_KEY = "noffelo_analytics_events";
     const RESERVATION_KEY = "noffelo_reservations";
     const RESERVATION_STATUS_KEY = "noffelo_reservation_status_map";
     const ADMIN_BACKEND_URL_KEY = "noffelo_admin_backend_url";
-    const ADMIN_BACKEND_KEY_KEY = "noffelo_admin_backend_key";
+    const ADMIN_SESSION_TOKEN_KEY = "noffelo_admin_session_token";
+    const ADMIN_SESSION_EXP_KEY = "noffelo_admin_session_exp";
     const ADMIN_THEME_KEY = "noffelo_admin_theme";
     const PAGE_SIZE = 12;
     const BUSINESS_WHATSAPP = "923085233717";
 
     let STATE = { events: [], reservations: [] };
     const PAGE = { reservations: 1, events: 1 };
+    let ADMIN_SESSION_TOKEN = "";
 
     function fmt(v){ return v == null ? "-" : String(v); }
     function html(s){ return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;"); }
+    function trimTrailingSlash(s){ return String(s || "").replace(/\/+$/, ""); }
+    function resolveBackendBase(url){
+      const raw = trimTrailingSlash(url);
+      if (!raw) return "";
+      if (raw.endsWith("/admin/list")) return raw.slice(0, -11);
+      if (raw.endsWith("/admin/login")) return raw.slice(0, -12);
+      if (raw.endsWith("/ingest")) return raw.slice(0, -7);
+      return raw;
+    }
+    function adminLoginUrl(base){ return `${trimTrailingSlash(base)}/admin/login`; }
+    function adminListUrl(base){ return `${trimTrailingSlash(base)}/admin/list`; }
+    function getDefaultBackendBase(){
+      const runtime = resolveBackendBase(window.__NOFFELO_BACKEND_ENDPOINT__ || "");
+      return runtime || "http://127.0.0.1:8787";
+    }
+    function saveSessionToken(token, expiresInSec){
+      const expTs = Date.now() + (Math.max(300, Number(expiresInSec) || 0) * 1000);
+      ADMIN_SESSION_TOKEN = token;
+      localStorage.setItem(ADMIN_SESSION_TOKEN_KEY, token);
+      localStorage.setItem(ADMIN_SESSION_EXP_KEY, String(expTs));
+    }
+    function clearSessionToken(){
+      ADMIN_SESSION_TOKEN = "";
+      localStorage.removeItem(ADMIN_SESSION_TOKEN_KEY);
+      localStorage.removeItem(ADMIN_SESSION_EXP_KEY);
+    }
+    function restoreSessionToken(){
+      const token = localStorage.getItem(ADMIN_SESSION_TOKEN_KEY) || "";
+      const expTs = Number(localStorage.getItem(ADMIN_SESSION_EXP_KEY) || "0");
+      if (!token || !expTs || Date.now() >= expTs) {
+        clearSessionToken();
+        return false;
+      }
+      ADMIN_SESSION_TOKEN = token;
+      return true;
+    }
     function readLocalData(){
       const events = JSON.parse(localStorage.getItem(ANALYTICS_KEY) || "[]");
       const reservations = JSON.parse(localStorage.getItem(RESERVATION_KEY) || "[]");
@@ -529,18 +568,24 @@
 
     async function pullBackend(){
       const status = document.getElementById("pullStatus");
-      const url = document.getElementById("backendUrl").value.trim();
-      const key = document.getElementById("backendKey").value.trim();
-      if (!url || !key) { status.textContent = "Enter backend URL and admin key."; return; }
+      const url = resolveBackendBase(document.getElementById("backendUrl").value.trim());
+      if (!url) { status.textContent = "Enter backend URL."; return; }
+      if (!ADMIN_SESSION_TOKEN) { status.textContent = "Please login first."; return; }
       status.textContent = "Pulling...";
       try {
         localStorage.setItem(ADMIN_BACKEND_URL_KEY, url);
-        localStorage.setItem(ADMIN_BACKEND_KEY_KEY, key);
-        const endpoint = url.includes("mode=list")
-          ? `${url}&key=${encodeURIComponent(key)}`
-          : (url.includes("/admin/list") ? `${url}?key=${encodeURIComponent(key)}` : `${url}?mode=list&key=${encodeURIComponent(key)}`);
-
-        const res = await fetch(endpoint);
+        const res = await fetch(adminListUrl(url), {
+          headers: { Authorization: `Bearer ${ADMIN_SESSION_TOKEN}` },
+        });
+        if (res.status === 401) {
+          clearSessionToken();
+          document.getElementById("panel").style.display = "none";
+          document.getElementById("logoutBtn").style.display = "none";
+          document.getElementById("authBox").style.display = "block";
+          document.getElementById("authStatus").textContent = "Session expired. Please login again.";
+          status.textContent = "Session expired.";
+          return;
+        }
         if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
         if (Array.isArray(data.events)) localStorage.setItem(ANALYTICS_KEY, JSON.stringify(data.events));
@@ -550,7 +595,7 @@
         render();
         status.textContent = "Pulled latest data successfully.";
       } catch (e) {
-        status.textContent = "Pull failed. Check endpoint/key/CORS.";
+        status.textContent = "Pull failed. Check backend URL/CORS/token.";
       }
     }
 
@@ -560,29 +605,61 @@
     }
 
     function initDashboard(){
-      document.getElementById("backendUrl").value = localStorage.getItem(ADMIN_BACKEND_URL_KEY) || "";
-      document.getElementById("backendKey").value = localStorage.getItem(ADMIN_BACKEND_KEY_KEY) || "";
+      const savedUrl = localStorage.getItem(ADMIN_BACKEND_URL_KEY) || getDefaultBackendBase();
+      document.getElementById("backendUrl").value = savedUrl;
+      document.getElementById("loginBackendUrl").value = savedUrl;
       STATE = readLocalData();
       setTheme(getTheme());
       render();
     }
 
     setTheme(getTheme());
+    document.getElementById("loginBackendUrl").value = localStorage.getItem(ADMIN_BACKEND_URL_KEY) || getDefaultBackendBase();
 
     document.querySelectorAll(".nav button[data-view-target]").forEach(btn => {
       btn.addEventListener("click", () => activateView(btn.dataset.viewTarget));
     });
 
-    document.getElementById("unlockBtn").addEventListener("click", () => {
-      const pass = document.getElementById("adminPass").value;
-      if (ADMIN_PASSWORD === "change-me-admin-password") {
-        alert("Please change ADMIN_PASSWORD in admin.html before using this dashboard.");
+    document.getElementById("unlockBtn").addEventListener("click", async () => {
+      const pass = document.getElementById("adminPass").value.trim();
+      const baseUrl = resolveBackendBase(document.getElementById("loginBackendUrl").value.trim());
+      const authStatus = document.getElementById("authStatus");
+      if (!baseUrl || !pass) {
+        authStatus.textContent = "Enter backend URL and admin password.";
         return;
       }
-      if (pass !== ADMIN_PASSWORD) return;
-      document.getElementById("authBox").style.display = "none";
-      document.getElementById("panel").style.display = "block";
-      initDashboard();
+      authStatus.textContent = "Logging in...";
+      try {
+        const res = await fetch(adminLoginUrl(baseUrl), {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ password: pass }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.token) {
+          authStatus.textContent = "Login failed. Check password/backend URL.";
+          return;
+        }
+        saveSessionToken(data.token, data.expiresInSec);
+        localStorage.setItem(ADMIN_BACKEND_URL_KEY, baseUrl);
+        document.getElementById("authBox").style.display = "none";
+        document.getElementById("panel").style.display = "block";
+        document.getElementById("logoutBtn").style.display = "inline-block";
+        initDashboard();
+        await pullBackend();
+        authStatus.textContent = "Logged in";
+      } catch (e) {
+        authStatus.textContent = "Login request failed.";
+      }
+    });
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      clearSessionToken();
+      document.getElementById("panel").style.display = "none";
+      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("authBox").style.display = "block";
+      document.getElementById("adminPass").value = "";
+      document.getElementById("authStatus").textContent = "Logged out.";
     });
 
     document.getElementById("pullBtn").addEventListener("click", pullBackend);
@@ -621,6 +698,14 @@
     document.getElementById("exportEventsBtn").addEventListener("click", () => {
       downloadCsv("noffelo_analytics_events.csv", getFilteredEvents(STATE.events));
     });
+
+    if (restoreSessionToken()) {
+      document.getElementById("authBox").style.display = "none";
+      document.getElementById("panel").style.display = "block";
+      document.getElementById("logoutBtn").style.display = "inline-block";
+      initDashboard();
+      pullBackend();
+    }
   </script>
 </body>
 </html>

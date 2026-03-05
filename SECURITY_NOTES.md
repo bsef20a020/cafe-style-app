@@ -6,8 +6,9 @@
 
 ## Required secret changes before launch
 - `NOFFELO_ADMIN_KEY` in `.env`
+- `NOFFELO_ADMIN_PASSWORD` in `.env`
+- `NOFFELO_ADMIN_SESSION_SECRET` in `.env`
 - `NOFFELO_INGEST_TOKEN` in `.env`
-- `ADMIN_PASSWORD` in `admin.html`
 
 ## CORS
 Set `NOFFELO_CORS_ORIGINS` to your real frontend origins only.
@@ -16,7 +17,8 @@ Set `NOFFELO_CORS_ORIGINS` to your real frontend origins only.
 `POST /ingest` requires Bearer token (`NOFFELO_INGEST_TOKEN`).
 
 ## Admin endpoint
-`GET /admin/list` requires `NOFFELO_ADMIN_KEY`.
+- `POST /admin/login` requires correct admin password.
+- `GET /admin/list` requires Bearer admin session token.
 
 ## Optional hardening
 - Put backend behind reverse proxy with HTTPS.

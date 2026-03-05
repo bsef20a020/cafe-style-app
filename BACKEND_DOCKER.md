@@ -6,6 +6,8 @@ cp .env.example .env
 ```
 Edit `.env` and set strong values:
 - `NOFFELO_ADMIN_KEY`
+- `NOFFELO_ADMIN_PASSWORD`
+- `NOFFELO_ADMIN_SESSION_SECRET`
 - `NOFFELO_INGEST_TOKEN`
 - optional CORS/rate-limit values
 
@@ -22,10 +24,13 @@ curl http://127.0.0.1:8787/health
 ## Endpoints
 - `POST /ingest` for analytics/reservations
 - `GET /health`
-- `GET /admin/list?key=YOUR_ADMIN_KEY`
+- `POST /admin/login` (password -> token)
+- `GET /admin/list` (Bearer token required)
 
 ## Security
 - `POST /ingest` requires Bearer token from `NOFFELO_INGEST_TOKEN`
+- `POST /admin/login` verifies `NOFFELO_ADMIN_PASSWORD`
+- Admin session tokens signed with `NOFFELO_ADMIN_SESSION_SECRET`
 - CORS restricted by `NOFFELO_CORS_ORIGINS`
 - Rate limit controlled by `NOFFELO_RATE_LIMIT_RPM`
 

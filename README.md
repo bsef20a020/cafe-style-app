@@ -31,10 +31,10 @@ cp config.runtime.example.js config.runtime.js
 - `http://127.0.0.1:5500/admin.html`
 
 ## Admin Login
-Admin password is read from runtime config:
-- `window.__NOFFELO_ADMIN_PASSWORD__` in `config.runtime.js`
-
-Fallback in code exists for development only.
+Admin password is verified on backend via:
+- `POST /admin/login` with `{ "password": "..." }`
+- Response returns short-lived bearer token
+- `GET /admin/list` requires `Authorization: Bearer <token>`
 
 ## Backend (Docker)
 1. Create env file:
@@ -43,6 +43,8 @@ cp .env.example .env
 ```
 2. Set strong values in `.env`:
 - `NOFFELO_ADMIN_KEY`
+- `NOFFELO_ADMIN_PASSWORD`
+- `NOFFELO_ADMIN_SESSION_SECRET`
 - `NOFFELO_INGEST_TOKEN`
 - `NOFFELO_CORS_ORIGINS`
 3. Start backend:
@@ -64,7 +66,6 @@ Create `config.runtime.js` (already gitignored) and set:
 ```js
 window.__NOFFELO_BACKEND_ENDPOINT__ = "https://your-backend-domain/ingest";
 window.__NOFFELO_INGEST_TOKEN__ = "your-ingest-token";
-window.__NOFFELO_ADMIN_PASSWORD__ = "your-admin-password";
 window.__NOFFELO_MAP_PIN__ = "https://maps.google.com/?q=MM+Alam+Road+Lahore";
 window.__NOFFELO_OPENING_HOURS__ = "Cafe 9am-9pm, Lounge 6pm-11pm";
 ```

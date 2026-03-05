@@ -3,12 +3,18 @@ import os
 import sqlite3
 import threading
 import time
+import hmac
+import hashlib
+import base64
 from datetime import datetime
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import urlparse
 
 DB_PATH = os.environ.get("NOFFELO_DB", "/data/noffelo.db")
 ADMIN_KEY = os.environ.get("NOFFELO_ADMIN_KEY", "change-me")
+ADMIN_PASSWORD = os.environ.get("NOFFELO_ADMIN_PASSWORD", "")
+ADMIN_SESSION_SECRET = os.environ.get("NOFFELO_ADMIN_SESSION_SECRET", ADMIN_KEY)
+ADMIN_SESSION_TTL_SEC = int(os.environ.get("NOFFELO_ADMIN_SESSION_TTL_SEC", "43200"))
 INGEST_TOKEN = os.environ.get("NOFFELO_INGEST_TOKEN", "")
 HOST = os.environ.get("NOFFELO_HOST", "0.0.0.0")
 PORT = int(os.environ.get("NOFFELO_PORT", "8787"))
@@ -87,6 +93,52 @@ def token_valid(handler: BaseHTTPRequestHandler) -> bool:
     return xkey == INGEST_TOKEN
 
 
+def b64u_encode(data: bytes) -> str:
+    return base64.urlsafe_b64encode(data).decode("utf-8").rstrip("=")
+
+
+def b64u_decode(value: str) -> bytes:
+    padding = "=" * ((4 - len(value) % 4) % 4)
+    return base64.urlsafe_b64decode((value + padding).encode("utf-8"))
+
+
+def sign_value(value: str) -> str:
+    digest = hmac.new(
+        ADMIN_SESSION_SECRET.encode("utf-8"),
+        value.encode("utf-8"),
+        hashlib.sha256,
+    ).digest()
+    return b64u_encode(digest)
+
+
+def issue_admin_token() -> str:
+    iat = int(time.time())
+    exp = iat + max(300, ADMIN_SESSION_TTL_SEC)
+    payload = json.dumps({"iat": iat, "exp": exp}, separators=(",", ":"))
+    payload_b64 = b64u_encode(payload.encode("utf-8"))
+    sig_b64 = sign_value(payload_b64)
+    return f"{payload_b64}.{sig_b64}"
+
+
+def admin_token_valid(handler: BaseHTTPRequestHandler) -> bool:
+    auth = (handler.headers.get("Authorization", "") or "").strip()
+    if not auth.startswith("Bearer "):
+        return False
+    raw = auth[len("Bearer "):].strip()
+    if "." not in raw:
+        return False
+    payload_b64, sig_b64 = raw.split(".", 1)
+    expected_sig = sign_value(payload_b64)
+    if not hmac.compare_digest(sig_b64, expected_sig):
+        return False
+    try:
+        payload = json.loads(b64u_decode(payload_b64).decode("utf-8"))
+        exp = int(payload.get("exp", 0))
+    except Exception:
+        return False
+    return int(time.time()) < exp
+
+
 def under_rate_limit(ip: str) -> bool:
     if RATE_LIMIT_RPM <= 0:
         return True
@@ -147,10 +199,10 @@ class Handler(BaseHTTPRequestHandler):
             return json_response(self, 200, {"ok": True, "service": "noffelo-backend", "ts": now_iso()})
 
         if parsed.path == "/admin/list":
-            qs = parse_qs(parsed.query)
-            key = (qs.get("key", [""])[0] or "").strip()
-            if key != ADMIN_KEY:
-                return json_response(self, 403, {"ok": False, "error": "invalid_admin_key"})
+            if not CORS_ALLOW_ALL and (self.headers.get("Origin") or "").strip() and not cors_origin(self):
+                return json_response(self, 403, {"ok": False, "error": "origin_not_allowed"})
+            if not admin_token_valid(self):
+                return json_response(self, 401, {"ok": False, "error": "invalid_admin_token"})
 
             conn = get_conn()
             events_rows = conn.execute(
@@ -196,6 +248,37 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
+        if parsed.path == "/admin/login":
+            if not CORS_ALLOW_ALL and (self.headers.get("Origin") or "").strip() and not cors_origin(self):
+                return json_response(self, 403, {"ok": False, "error": "origin_not_allowed"})
+            ip = request_ip(self)
+            if not under_rate_limit(ip):
+                return json_response(self, 429, {"ok": False, "error": "rate_limited"})
+            if not ADMIN_PASSWORD:
+                return json_response(self, 503, {"ok": False, "error": "admin_password_not_configured"})
+            try:
+                length = int(self.headers.get("Content-Length", "0"))
+                if length <= 0 or length > MAX_BODY_BYTES:
+                    return json_response(self, 413, {"ok": False, "error": "invalid_body_size"})
+                raw = self.rfile.read(length)
+                payload = json.loads(raw.decode("utf-8") or "{}")
+            except Exception:
+                return json_response(self, 400, {"ok": False, "error": "invalid_json"})
+
+            password = str(payload.get("password", "")).strip()
+            if not hmac.compare_digest(password, ADMIN_PASSWORD):
+                return json_response(self, 401, {"ok": False, "error": "invalid_credentials"})
+
+            return json_response(
+                self,
+                200,
+                {
+                    "ok": True,
+                    "token": issue_admin_token(),
+                    "expiresInSec": max(300, ADMIN_SESSION_TTL_SEC),
+                },
+            )
+
         if parsed.path != "/ingest":
             return json_response(self, 404, {"ok": False, "error": "not_found"})
 
