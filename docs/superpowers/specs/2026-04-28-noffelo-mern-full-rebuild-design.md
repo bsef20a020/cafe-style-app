@@ -20,6 +20,7 @@ The first implementation should deliver a market-ready MVP foundation:
 - Express + Node backend in `server/`
 - MongoDB persistence using Mongoose
 - Docker Compose for client, server, and MongoDB
+- Full UI rebuild for a market-ready cafe/lounge product, not a visual copy of the old static site
 - Public cafe experience with home, menu, reservations, contact/location, and 404
 - Admin experience with login, dashboard, reservations, menu management, and analytics
 - Seed data based on the current menu/content where useful
@@ -47,9 +48,11 @@ The app will use a standard MERN split:
 
 The current static files and Python backend remain in the repo during the rebuild as reference material. The new MERN app and Docker Compose stack become the primary implementation after verification.
 
-## Frontend Design
+## Frontend And UI Direction
 
-The frontend will be a fresh rebuild rather than a direct HTML port. It should keep the NOFFELO premium cafe/lounge identity but improve the product feel:
+The frontend will be a fresh UI rebuild rather than a direct HTML port. The old static pages are reference material for brand/content only. The final visual direction should be discussed and approved before detailed UI implementation so the project can feel like a credible market-side cafe product, not just a converted template.
+
+The new UI should keep the NOFFELO premium cafe/lounge identity while improving the product feel:
 
 - Strong first viewport with brand, booking action, and cafe/lounging atmosphere
 - Dynamic menu sections loaded from the API
@@ -58,6 +61,8 @@ The frontend will be a fresh rebuild rather than a direct HTML port. It should k
 - Admin route group with authenticated dashboard
 - Responsive layout for mobile and desktop
 - Clean loading, empty, and error states
+
+The UI discussion should cover visual personality, color palette, typography, section structure, admin dashboard density, mobile behavior, and the kind of market positioning NOFFELO should communicate.
 
 Frontend state should stay simple. API data can be loaded through small service modules and React hooks. Avoid adding a large state library unless the app clearly needs one.
 
