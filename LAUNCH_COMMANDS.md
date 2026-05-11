@@ -1,46 +1,43 @@
-# Launch Commands (Copy/Paste)
+# Launch Commands
 
-## 1) Prepare local secrets
+## Prepare Local Env
+
 ```bash
 cp .env.example .env
-# edit .env with strong keys (ADMIN_KEY, ADMIN_PASSWORD, SESSION_SECRET, INGEST_TOKEN)
 ```
 
-## 2) Start backend
+Edit `.env` with strong admin and JWT values.
+
+## Start MERN Stack
+
 ```bash
-docker compose up -d --build
+docker compose up --build
 ```
 
-## 3) Export vars for smoke test
+## Seed Database
+
 ```bash
-set -a
-source .env
-set +a
+docker compose exec server npm run seed
 ```
 
-## 4) Smoke test backend
+## Open App
+
+- `http://localhost:5173`
+- `http://localhost:5173/admin/login`
+- `http://localhost:5000/api/health`
+
+## Local Non-Docker Mode
+
 ```bash
-./scripts/smoke_test_backend.sh
+npm --prefix server install
+npm --prefix client install
+npm run seed
+npm run server
+npm run client
 ```
 
-## 5) Preflight project checks
+## Smoke Check
+
 ```bash
-./scripts/preflight_check.sh
+bash scripts/smoke_test_mern.sh
 ```
-
-## 6) Push to GitHub
-```bash
-git add .
-git commit -m "Production-ready dashboard and deploy tooling"
-git push
-```
-
-## 7) Netlify deploy
-- Import GitHub repo
-- Build command: (empty)
-- Publish directory: `.`
-
-## 8) After Netlify URL generated
-- Update `robots.txt` and `sitemap.xml` with real domain
-- Re-run `./scripts/preflight_check.sh`
-- Commit + push

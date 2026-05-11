@@ -1,110 +1,99 @@
-# NOFFELO Studio
+# NOFFELO MERN
 
-Premium cafe + lounge website with booking flow, analytics, and admin dashboard.
+Market-ready cafe and evening lounge project built with MongoDB, Express, React, Node, and Docker.
 
-## Features
-- Luxury landing page with responsive UI
-- Reservation form with WhatsApp handoff + booking reference
-- Admin dashboard with filters, KPIs, export CSV, status updates
-- JSON-driven menu (`menu-data.json`)
-- Optional backend API (Python + SQLite via Docker)
-- Optional Google Sheets pipeline (`google-apps-script.gs`)
+## What This Rebuild Includes
+
+- React + Vite public cafe app
+- Dynamic menu loaded from MongoDB
+- Reservation form with booking reference and WhatsApp follow-up
+- Express API with validation, rate limits, CORS, and JWT admin auth
+- MongoDB models for menu items, reservations, admins, and analytics events
+- Admin dashboard for reservations, status updates, menu items, and metrics
+- Docker Compose for client, server, and MongoDB
+- Seed script for starter menu data and admin login
 
 ## Project Structure
-- `index.html` frontend site
-- `admin.html` admin dashboard
-- `menu-editor.html` menu update tool
-- `menu-data.json` menu source data
-- `backend/server.py` ingest + admin list API
-- `docker-compose.yml` local backend orchestration
-- `config.runtime.example.js` runtime config template
 
-## Quick Start (Local)
-1. Install a static server (or use VS Code Live Server).
-2. Copy runtime config:
-```bash
-cp config.runtime.example.js config.runtime.js
-```
-3. Open `config.runtime.js` and set values.
-4. Serve project root and open:
-- `http://127.0.0.1:5500/index.html`
-- `http://127.0.0.1:5500/admin.html`
+- `client/` React frontend
+- `server/` Express + Mongoose API
+- `server/src/models/` MongoDB models
+- `server/src/routes/` API route modules
+- `menu-data.json` legacy menu seed source
+- `docker-compose.yml` local MERN stack
+- `docs/superpowers/specs/` approved rebuild design
 
-## Admin Login
-Admin password is verified on backend via:
-- `POST /admin/login` with `{ "password": "..." }`
-- Response returns short-lived bearer token
-- `GET /admin/list` requires `Authorization: Bearer <token>`
+The old static files and Python backend are still in the repo as reference material while the MERN rebuild becomes the primary app.
 
-## Backend (Docker)
-1. Create env file:
+## Quick Start With Docker
+
+1. Create local environment values:
+
 ```bash
 cp .env.example .env
 ```
-2. Set strong values in `.env`:
-- `NOFFELO_ADMIN_KEY`
-- `NOFFELO_ADMIN_PASSWORD`
-- `NOFFELO_ADMIN_SESSION_SECRET`
-- `NOFFELO_INGEST_TOKEN`
-- `NOFFELO_CORS_ORIGINS`
-3. Start backend:
+
+2. Start the full stack:
+
 ```bash
-docker compose up -d --build
+docker compose up --build
 ```
-4. Check health:
+
+3. Seed MongoDB in another terminal:
+
 ```bash
-curl http://127.0.0.1:8787/health
+docker compose exec server npm run seed
 ```
-5. Run checks:
+
+4. Open the app:
+
+- Public site: `http://localhost:5173`
+- Admin login: `http://localhost:5173/admin/login`
+- API health: `http://localhost:5000/api/health`
+
+Default local admin values are in `.env.example`. Change them before sharing or deploying.
+
+## Local Development Without Docker
+
+Install dependencies:
+
 ```bash
-bash scripts/preflight_check.sh
-bash scripts/smoke_test_backend.sh
+npm --prefix server install
+npm --prefix client install
 ```
 
-## Frontend Runtime Config
-Create `config.runtime.js` (already gitignored) and set:
-```js
-window.__NOFFELO_BACKEND_ENDPOINT__ = "https://your-backend-domain/ingest";
-window.__NOFFELO_INGEST_TOKEN__ = "your-ingest-token";
-window.__NOFFELO_MAP_PIN__ = "https://maps.google.com/?q=MM+Alam+Road+Lahore";
-window.__NOFFELO_OPENING_HOURS__ = "Cafe 9am-9pm, Lounge 6pm-11pm";
+Run MongoDB locally, then seed and start both apps:
+
+```bash
+npm run seed
+npm run server
+npm run client
 ```
 
-## Deploy (Free Hosting)
-### Frontend (Netlify)
-1. Push repo to GitHub.
-2. Import repo in Netlify.
-3. Build command: none.
-4. Publish directory: project root.
-5. Add custom domain or use Netlify subdomain.
+## Key API Routes
 
-### Backend (Render/Railway/Fly)
-1. Deploy `backend/` as a web service.
-2. Expose port `8787`.
-3. Set env vars from `.env`.
-4. Add your Netlify domain to `NOFFELO_CORS_ORIGINS`.
-5. Put backend ingest URL into `config.runtime.js`.
+- `GET /api/health`
+- `GET /api/menu`
+- `POST /api/reservations`
+- `POST /api/admin/login`
+- `GET /api/admin/reservations`
+- `PATCH /api/admin/reservations/:id`
+- `GET /api/admin/analytics`
+- `GET /api/admin/menu`
+- `POST /api/admin/menu`
+- `PATCH /api/admin/menu/:id`
+- `DELETE /api/admin/menu/:id`
 
-## Google Apps Script (Optional)
-If you do not want Docker backend:
-- Deploy `google-apps-script.gs` as web app
-- Follow `GOOGLE_SHEETS_SETUP.md`
-- Use that endpoint in frontend ingest flow
+## Environment
 
-## Pre Go-Live Checklist
-- Replace `example.com` in `robots.txt` and `sitemap.xml`
-- Use strong admin password and rotate periodically
-- Keep `.env` and `config.runtime.js` private
-- Verify reservation, WhatsApp, analytics, and admin pull flow
-- Run `QA_CHECKLIST.md`
+Important values:
 
-## Security Notes
-- Never commit secrets
-- Restrict CORS to known domains only
-- Keep ingest token private
-- Change keys immediately if leaked
+- `MONGO_URI`
+- `JWT_SECRET`
+- `ADMIN_EMAIL`
+- `ADMIN_PASSWORD`
+- `CLIENT_ORIGINS`
+- `WHATSAPP_NUMBER`
+- `VITE_API_URL`
 
-See also:
-- `BACKEND_DOCKER.md`
-- `SECURITY_NOTES.md`
-- `LAUNCH_COMMANDS.md`
+Never commit real production secrets.

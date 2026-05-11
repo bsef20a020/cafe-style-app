@@ -3,3 +3,11 @@ config.runtime.js
 backend/data/
 __pycache__/
 *.pyc
+node_modules/
+client/node_modules/
+server/node_modules/
+client/dist/
+server/.env
+client/.env
+npm-debug.log*
+.DS_Store
