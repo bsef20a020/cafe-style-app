@@ -23,8 +23,6 @@ Market-ready cafe and evening lounge project built with MongoDB, Express, React,
 - `docker-compose.yml` local MERN stack
 - `docs/superpowers/specs/` approved rebuild design
 
-The old static files and Python backend are still in the repo as reference material while the MERN rebuild becomes the primary app.
-
 ## Quick Start With Docker
 
 1. Create local environment values:
