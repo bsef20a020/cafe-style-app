@@ -1,4 +1,4 @@
-import { AlertCircle, UserPlus } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, UserPlus } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCustomerAuth } from "../auth/CustomerAuthContext";
@@ -11,6 +11,7 @@ function SignupPage() {
   const { user, signup } = useCustomerAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", email: "", phone: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   useEffect(() => {
@@ -65,7 +66,26 @@ function SignupPage() {
         </label>
         <label>
           Password
-          <input name="password" type="password" value={form.password} onChange={updateField} required minLength={8} autoComplete="new-password" />
+          <span className="password-input-wrap">
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={updateField}
+              required
+              minLength={8}
+              autoComplete="new-password"
+            />
+            <button
+              className="password-toggle"
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </span>
         </label>
 
         {status.type === "error" ? (

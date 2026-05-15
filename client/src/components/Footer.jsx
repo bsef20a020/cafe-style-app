@@ -1,4 +1,4 @@
-import { Instagram, MapPin, MessageCircle } from "lucide-react";
+import { CircleHelp, Instagram, MapPin, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 
 function Footer() {
@@ -11,6 +11,10 @@ function Footer() {
       <div className="footer-grid">
         <Link to="/menu">Menu</Link>
         <Link to="/our-story">Our Story</Link>
+        <Link to="/faq">
+          <CircleHelp size={16} />
+          FAQ
+        </Link>
         <Link to="/reserve">Reservations</Link>
         <a href="https://maps.google.com/?q=MM+Alam+Road+Lahore" target="_blank" rel="noreferrer">
           <MapPin size={16} />

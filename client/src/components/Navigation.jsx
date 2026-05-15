@@ -1,4 +1,13 @@
-import { BookOpenText, CalendarCheck, Coffee, LogIn, Menu as MenuIcon, ShieldCheck, UserRound, X } from "lucide-react";
+import {
+  BookOpenText,
+  CalendarCheck,
+  Coffee,
+  LogIn,
+  Menu as MenuIcon,
+  ShieldCheck,
+  UserRound,
+  X
+} from "lucide-react";
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { useCustomerAuth } from "../auth/CustomerAuthContext";
@@ -6,9 +15,15 @@ import BearCoffeeLogo from "./BearCoffeeLogo";
 
 function Navigation() {
   const [open, setOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
   const { user } = useCustomerAuth();
 
-  const close = () => setOpen(false);
+  const close = () => {
+    setOpen(false);
+    setAccountOpen(false);
+  };
+
+  const toggleAccount = () => setAccountOpen((value) => !value);
 
   return (
     <header className="topbar">
@@ -38,21 +53,28 @@ function Navigation() {
           <CalendarCheck size={17} />
           Reserve
         </NavLink>
-        {user ? (
-          <NavLink to="/account" onClick={close}>
-            <UserRound size={17} />
-            Account
-          </NavLink>
-        ) : (
-          <NavLink to="/login" onClick={close}>
-            <LogIn size={17} />
-            Login
-          </NavLink>
-        )}
-        <NavLink to="/admin/login" onClick={close}>
-          <ShieldCheck size={17} />
-          Admin
-        </NavLink>
+        <div className="account-menu">
+          <button
+            className="icon-button account-menu-toggle"
+            type="button"
+            onClick={toggleAccount}
+            aria-expanded={accountOpen}
+            aria-label="Open account options"
+            title="Account"
+          >
+            <UserRound size={18} />
+          </button>
+          <div className={accountOpen ? "account-menu-popover open" : "account-menu-popover"} role="menu">
+            <NavLink to={user ? "/account" : "/login"} onClick={close} role="menuitem">
+              {user ? <UserRound size={17} /> : <LogIn size={17} />}
+              User
+            </NavLink>
+            <NavLink to="/admin/login" onClick={close} role="menuitem">
+              <ShieldCheck size={17} />
+              Admin
+            </NavLink>
+          </div>
+        </div>
       </nav>
     </header>
   );

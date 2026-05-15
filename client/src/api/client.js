@@ -62,7 +62,7 @@ async function request(path, options = {}) {
     error.details = payload.details;
 
     if (response.status === 401 && typeof window !== "undefined") {
-      if (path.startsWith("/admin")) {
+      if (path.startsWith("/admin") || path === "/chat/admin") {
         window.dispatchEvent(new CustomEvent("noffelo:unauthorized", { detail: { path } }));
       }
       if (path.startsWith("/account") || path === "/auth/me") {
@@ -101,12 +101,15 @@ export const api = {
   updateReservationRequest: (reference, body) => request(`/reservations/${reference}`, { method: "PATCH", body }),
   cancelReservationRequest: (reference, body) => request(`/reservations/${reference}/cancel`, { method: "PATCH", body }),
   trackEvent: (body) => request("/analytics", { method: "POST", body }).catch(() => null),
+  customerChat: (body) => request("/chat/customer", { method: "POST", body }),
+  adminChat: (body) => request("/chat/admin", { method: "POST", body }),
   customerSignup: (body) => request("/auth/signup", { method: "POST", body }),
   customerLogin: (body) => request("/auth/login", { method: "POST", body }),
   customerLogout: () => request("/auth/logout", { method: "POST" }).catch(() => null),
   getCustomerMe: () => request("/auth/me"),
   forgotCustomerPassword: (body) => request("/auth/forgot-password", { method: "POST", body }),
   resetCustomerPassword: (body) => request("/auth/reset-password", { method: "POST", body }),
+  updateCustomerProfile: (body) => request("/account/profile", { method: "PATCH", body }),
   getAccountOrders: () => request("/account/orders"),
   getAccountReservations: () => request("/account/reservations"),
   login: (body) => request("/admin/login", { method: "POST", body }),

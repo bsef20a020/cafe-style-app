@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { api } from "./api/client";
 import { clearAdminSession } from "./auth/adminSession";
 import { CustomerAuthProvider, useCustomerAuth } from "./auth/CustomerAuthContext";
+import { CartProvider } from "./cart/CartContext";
+import ChatWidget from "./components/ChatWidget";
 import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
 import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
@@ -10,6 +12,7 @@ import SeoMeta from "./components/SeoMeta";
 import AccountPage from "./pages/AccountPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLogin from "./pages/AdminLogin";
+import FAQPage from "./pages/FAQPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import HomePage from "./pages/HomePage";
 import LoginPage from "./pages/LoginPage";
@@ -25,9 +28,15 @@ function ScrollAndTrack() {
   const location = useLocation();
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    if (location.hash) {
+      window.setTimeout(() => {
+        document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 0);
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
     api.trackEvent({ type: "page_view", path: location.pathname });
-  }, [location.pathname]);
+  }, [location.hash, location.pathname]);
 
   return null;
 }
@@ -81,6 +90,10 @@ const routeMeta = {
   "/our-story": {
     title: "Our Story — NOFFELO",
     description: "Discover the cafe-by-day and lounge-by-evening rhythm behind NOFFELO."
+  },
+  "/faq": {
+    title: "FAQ - NOFFELO",
+    description: "Practical questions about NOFFELO hours, reservations, online ordering, payment, and guest support."
   },
   "/reserve": {
     title: "Reserve a Table — NOFFELO",
@@ -139,9 +152,10 @@ function App() {
       <ScrollAndTrack />
       <AdminUnauthorizedListener />
       <CustomerAuthProvider>
-        <CustomerUnauthorizedListener />
-        <RouteSeo />
-        <Routes>
+        <CartProvider>
+          <CustomerUnauthorizedListener />
+          <RouteSeo />
+          <Routes>
           <Route
             path="/"
             element={
@@ -163,6 +177,14 @@ function App() {
             element={
               <SiteFrame>
                 <OurStoryPage />
+              </SiteFrame>
+            }
+          />
+          <Route
+            path="/faq"
+            element={
+              <SiteFrame>
+                <FAQPage />
               </SiteFrame>
             }
           />
@@ -241,7 +263,8 @@ function App() {
               </SiteFrame>
             }
           />
-        </Routes>
+          </Routes>
+        </CartProvider>
       </CustomerAuthProvider>
     </>
   );
@@ -268,6 +291,7 @@ function SiteFrame({ children }) {
       <Navigation />
       <main>{children}</main>
       <Footer />
+      <ChatWidget />
     </div>
   );
 }

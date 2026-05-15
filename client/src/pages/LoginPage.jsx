@@ -1,4 +1,4 @@
-import { AlertCircle, LogIn } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, LogIn } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCustomerAuth } from "../auth/CustomerAuthContext";
@@ -9,6 +9,7 @@ function LoginPage() {
   const location = useLocation();
   const redirectTo = location.state?.from || "/account";
   const [form, setForm] = useState({ email: "", password: "" });
+  const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   useEffect(() => {
@@ -51,8 +52,29 @@ function LoginPage() {
           <input name="email" type="email" value={form.email} onChange={updateField} required autoComplete="email" />
         </label>
         <label>
-          Password
-          <input name="password" type="password" value={form.password} onChange={updateField} required autoComplete="current-password" />
+          <span className="auth-label-row">
+            <span>Password</span>
+            <Link to="/forgot-password">Forgot password?</Link>
+          </span>
+          <span className="password-input-wrap">
+            <input
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={form.password}
+              onChange={updateField}
+              required
+              autoComplete="current-password"
+            />
+            <button
+              className="password-toggle"
+              type="button"
+              onClick={() => setShowPassword((value) => !value)}
+              aria-label={showPassword ? "Hide password" : "Show password"}
+              title={showPassword ? "Hide password" : "Show password"}
+            >
+              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+          </span>
         </label>
 
         {status.type === "error" ? (
@@ -67,10 +89,9 @@ function LoginPage() {
           {status.type === "loading" ? "Signing in" : "Sign in"}
         </button>
 
-        <div className="auth-links">
-          <Link to="/forgot-password">Forgot password?</Link>
-          <Link to="/signup">Create account</Link>
-        </div>
+        <p className="auth-switch">
+          Don't have an account? <Link to="/signup">Sign up</Link>
+        </p>
       </form>
     </section>
   );

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
 import { useCustomerAuth } from "../auth/CustomerAuthContext";
+import { useCart } from "../cart/CartContext";
 import MenuCard from "../components/MenuCard";
 import { fallbackMenu } from "../data/menuFallback";
 
@@ -26,6 +27,7 @@ const emptyCheckout = {
 
 function MenuPage() {
   const { user } = useCustomerAuth();
+  const { cart, cartCount, cartTotal, addToCart: addCartItem, changeQuantity, removeItem, clearCart } = useCart();
   const [state, setState] = useState({
     items: fallbackMenu.items,
     categories: fallbackMenu.categories,
@@ -34,7 +36,6 @@ function MenuPage() {
   });
   const [category, setCategory] = useState("all");
   const [search, setSearch] = useState("");
-  const [cart, setCart] = useState([]);
   const [checkout, setCheckout] = useState(emptyCheckout);
   const [orderState, setOrderState] = useState({ type: "idle", message: "", order: null, payment: null });
 
@@ -78,34 +79,9 @@ function MenuPage() {
     });
   }, [state.items, category, search]);
 
-  const cartTotal = useMemo(
-    () => cart.reduce((sum, item) => sum + Number(item.price || 0) * item.quantity, 0),
-    [cart]
-  );
-
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-
   function addToCart(item) {
     setOrderState({ type: "idle", message: "", order: null, payment: null });
-    setCart((current) => {
-      const existing = current.find((entry) => entry._id === item._id);
-      if (existing) {
-        return current.map((entry) => (entry._id === item._id ? { ...entry, quantity: entry.quantity + 1 } : entry));
-      }
-      return [...current, { ...item, quantity: 1 }];
-    });
-  }
-
-  function changeQuantity(id, delta) {
-    setCart((current) =>
-      current
-        .map((item) => (item._id === id ? { ...item, quantity: item.quantity + delta } : item))
-        .filter((item) => item.quantity > 0)
-    );
-  }
-
-  function removeItem(id) {
-    setCart((current) => current.filter((item) => item._id !== id));
+    addCartItem(item);
   }
 
   function updateCheckoutField(event) {
@@ -150,7 +126,7 @@ function MenuPage() {
         return;
       }
 
-      setCart([]);
+      clearCart();
       setOrderState({
         type: "success",
         message: data.payment?.message || "Order placed successfully.",

@@ -20,6 +20,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { clearAdminSession } from "../auth/adminSession";
+import AdminChatWidget from "../components/AdminChatWidget";
 import BearCoffeeLogo from "../components/BearCoffeeLogo";
 import { imageAtWidth, imageUrlIssue } from "../utils/imageUrls";
 
@@ -799,6 +800,7 @@ function AdminDashboard() {
           {!filteredMenu.length && !state.loading ? <p className="empty-state">No menu items match this view.</p> : null}
         </section>
       </section>
+      <AdminChatWidget />
     </main>
   );
 }

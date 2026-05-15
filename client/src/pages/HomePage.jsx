@@ -2,6 +2,7 @@ import { ArrowRight, CalendarCheck, Clock, Coffee, ConciergeBell, MapPin, Sparkl
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../api/client";
+import FAQSection from "../components/FAQSection";
 import MenuCard from "../components/MenuCard";
 import ReservationForm from "../components/ReservationForm";
 import { fallbackMenu } from "../data/menuFallback";
@@ -116,6 +117,14 @@ function HomePage() {
           </Link>
         </p>
       </section>
+
+      <FAQSection
+        compact
+        limit={4}
+        title="Questions before you book?"
+        intro="The essentials on hours, reservations, orders, and changes before you send a request."
+        actionTo="/faq"
+      />
 
       <ReservationForm />
     </>

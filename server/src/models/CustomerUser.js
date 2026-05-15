@@ -5,6 +5,7 @@ const customerUserSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     phone: { type: String, required: true, trim: true },
+    profileImage: { type: String, trim: true },
     passwordHash: { type: String, required: true, select: false },
     resetPasswordTokenHash: { type: String, select: false },
     resetPasswordExpiresAt: { type: Date, select: false },

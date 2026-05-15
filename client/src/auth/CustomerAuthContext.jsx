@@ -49,6 +49,12 @@ export function CustomerAuthProvider({ children }) {
     return data;
   }, []);
 
+  const updateProfile = useCallback(async (body) => {
+    const data = await api.updateCustomerProfile(body);
+    setState((current) => ({ ...current, user: data.user, loading: false }));
+    return data;
+  }, []);
+
   const value = useMemo(
     () => ({
       user: state.user,
@@ -59,9 +65,10 @@ export function CustomerAuthProvider({ children }) {
       signup,
       login,
       logout,
-      resetPassword
+      resetPassword,
+      updateProfile
     }),
-    [login, logout, refresh, resetPassword, signup, state.expiresAt, state.loading, state.user]
+    [login, logout, refresh, resetPassword, signup, state.expiresAt, state.loading, state.user, updateProfile]
   );
 
   return <CustomerAuthContext.Provider value={value}>{children}</CustomerAuthContext.Provider>;

@@ -13,9 +13,11 @@ const validateBody = require("../middleware/validate");
 const requireAuth = require("../middleware/auth");
 const asyncHandler = require("../utils/asyncHandler");
 const slugify = require("../utils/slugify");
+const { syncFromMongoDB } = require("../services/vectorStore");
 
 const router = express.Router();
 const ADMIN_COOKIE_NAME = "noffelo_admin_session";
+const ADMIN_COOKIE_PATH = "/api";
 
 const loginLimiter = rateLimit({
   windowMs: 60 * 1000,
@@ -107,13 +109,19 @@ function setAdminCookie(res, token) {
     httpOnly: true,
     sameSite: "lax",
     secure: env.NODE_ENV === "production",
-    path: "/api/admin",
+    path: ADMIN_COOKIE_PATH,
     expires: new Date(expiresAt)
   });
   return expiresAt;
 }
 
 function clearAdminCookie(res) {
+  res.clearCookie(ADMIN_COOKIE_NAME, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: env.NODE_ENV === "production",
+    path: ADMIN_COOKIE_PATH
+  });
   res.clearCookie(ADMIN_COOKIE_NAME, {
     httpOnly: true,
     sameSite: "lax",
@@ -174,6 +182,17 @@ router.get("/me", (req, res) => {
     }
   });
 });
+
+router.post(
+  "/sync-vectors",
+  asyncHandler(async (_req, res) => {
+    const result = await syncFromMongoDB();
+    res.json({
+      synced: result.synced,
+      message: result.message
+    });
+  })
+);
 
 router.get(
   "/reservations",

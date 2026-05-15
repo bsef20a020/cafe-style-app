@@ -11,6 +11,7 @@ const orderRoutes = require("./routes/orders");
 const reservationRoutes = require("./routes/reservations");
 const adminRoutes = require("./routes/admin");
 const analyticsRoutes = require("./routes/analytics");
+const chatRoutes = require("./routes/chat");
 const { notFound, errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
@@ -53,6 +54,7 @@ app.use("/api/account", accountRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/analytics", analyticsRoutes);
+app.use("/api/chat", chatRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use(notFound);
