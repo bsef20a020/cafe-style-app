@@ -92,6 +92,7 @@ Important values:
 - `ADMIN_PASSWORD`
 - `CLIENT_ORIGINS`
 - `WHATSAPP_NUMBER`
+- `RESERVATION_SLOT_CAPACITY`
 - `VITE_API_URL`
 
 Never commit real production secrets.

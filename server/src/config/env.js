@@ -20,6 +20,11 @@ const toBoolean = (value, fallback = false) => {
   return ["true", "1", "yes", "on"].includes(String(value).toLowerCase());
 };
 
+const toPositiveInteger = (value, fallback) => {
+  const number = Number(value);
+  return Number.isInteger(number) && number > 0 ? number : fallback;
+};
+
 const env = {
   NODE_ENV: process.env.NODE_ENV || "development",
   PORT: Number(process.env.PORT || process.env.NOFFELO_PORT || 5000),
@@ -47,6 +52,10 @@ const env = {
     process.env.WHATSAPP_NUMBER ||
     process.env.NOFFELO_WHATSAPP_NUMBER ||
     "923001234567",
+  RESERVATION_SLOT_CAPACITY: toPositiveInteger(
+    process.env.RESERVATION_SLOT_CAPACITY || process.env.NOFFELO_RESERVATION_SLOT_CAPACITY,
+    20
+  ),
   CLIENT_URL:
     process.env.CLIENT_URL ||
     (process.env.CLIENT_ORIGINS || "http://localhost:5173").split(",")[0].trim(),

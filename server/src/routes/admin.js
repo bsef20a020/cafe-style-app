@@ -40,6 +40,64 @@ const orderUpdateSchema = z.object({
   paymentStatus: z.enum(["unpaid", "pending", "paid", "failed", "refunded"]).optional()
 });
 
+const reservationStatusTransitions = {
+  new: ["confirmed", "cancelled"],
+  confirmed: ["seated", "cancelled"],
+  seated: ["completed", "cancelled"],
+  completed: [],
+  cancelled: []
+};
+
+const orderStatusTransitions = {
+  new: ["accepted", "cancelled"],
+  accepted: ["preparing", "cancelled"],
+  preparing: ["ready", "cancelled"],
+  ready: ["completed", "cancelled"],
+  completed: [],
+  cancelled: []
+};
+
+const paymentStatusTransitions = {
+  unpaid: ["pending", "paid"],
+  pending: ["paid", "failed"],
+  failed: ["pending", "unpaid"],
+  paid: ["refunded"],
+  refunded: []
+};
+
+function allowedNext(transitions, current) {
+  return transitions[current] || [];
+}
+
+function assertTransitionAllowed(transitions, field, current, next) {
+  if (current === next) return;
+
+  const allowed = allowedNext(transitions, current);
+  if (allowed.includes(next)) return;
+
+  const error = new Error("invalid_status_transition");
+  error.status = 400;
+  error.details = {
+    [field]: [
+      allowed.length
+        ? `Cannot change ${field} from ${current} to ${next}. Allowed next: ${allowed.join(", ")}.`
+        : `Cannot change ${field} from ${current}. This state is final.`
+    ]
+  };
+  throw error;
+}
+
+function statusHistoryEntry(req, field, from, to) {
+  return {
+    field,
+    from,
+    to,
+    changedBy: req.user?._id,
+    changedByName: req.user?.name || req.user?.email || "Admin",
+    changedAt: new Date()
+  };
+}
+
 function isUnsplashPageUrl(value) {
   try {
     const parsed = new URL(value);
@@ -211,14 +269,30 @@ router.patch(
   "/reservations/:id",
   validateBody(statusSchema),
   asyncHandler(async (req, res) => {
-    const reservation = await Reservation.findByIdAndUpdate(
-      req.params.id,
-      { status: req.body.status },
-      { new: true, runValidators: true }
-    );
-
+    const reservation = await Reservation.findById(req.params.id);
     if (!reservation) {
       return res.status(404).json({ ok: false, error: "reservation_not_found" });
+    }
+
+    assertTransitionAllowed(reservationStatusTransitions, "status", reservation.status, req.body.status);
+
+    if (reservation.status !== req.body.status) {
+      const historyEntry = statusHistoryEntry(req, "status", reservation.status, req.body.status);
+      reservation.statusHistory.push(historyEntry);
+      reservation.status = req.body.status;
+      await reservation.save();
+
+      await AnalyticsEvent.create({
+        type: "reservation_status_updated",
+        path: "/admin/reservations",
+        metadata: {
+          reservationId: reservation._id,
+          reference: reservation.reference,
+          from: historyEntry.from,
+          to: req.body.status,
+          adminId: req.user?._id
+        }
+      });
     }
 
     res.json({ ok: true, data: { reservation } });
@@ -250,13 +324,44 @@ router.patch(
       });
     }
 
-    const order = await Order.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
-
+    const order = await Order.findById(req.params.id);
     if (!order) {
       return res.status(404).json({ ok: false, error: "order_not_found" });
+    }
+
+    if (req.body.status) {
+      assertTransitionAllowed(orderStatusTransitions, "status", order.status, req.body.status);
+    }
+
+    if (req.body.paymentStatus) {
+      assertTransitionAllowed(paymentStatusTransitions, "paymentStatus", order.paymentStatus, req.body.paymentStatus);
+    }
+
+    const historyEntries = [];
+    if (req.body.status && order.status !== req.body.status) {
+      historyEntries.push(statusHistoryEntry(req, "status", order.status, req.body.status));
+      order.status = req.body.status;
+    }
+
+    if (req.body.paymentStatus && order.paymentStatus !== req.body.paymentStatus) {
+      historyEntries.push(statusHistoryEntry(req, "paymentStatus", order.paymentStatus, req.body.paymentStatus));
+      order.paymentStatus = req.body.paymentStatus;
+    }
+
+    if (historyEntries.length) {
+      order.statusHistory.push(...historyEntries);
+      await order.save();
+
+      await AnalyticsEvent.create({
+        type: "order_status_updated",
+        path: "/admin/orders",
+        metadata: {
+          orderId: order._id,
+          reference: order.reference,
+          changes: historyEntries.map((entry) => ({ field: entry.field, from: entry.from, to: entry.to })),
+          adminId: req.user?._id
+        }
+      });
     }
 
     res.json({ ok: true, data: { order } });

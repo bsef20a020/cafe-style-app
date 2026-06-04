@@ -14,6 +14,18 @@ const orderItemSchema = new mongoose.Schema(
   { _id: false }
 );
 
+const statusHistorySchema = new mongoose.Schema(
+  {
+    field: { type: String, enum: ["status", "paymentStatus"], required: true },
+    from: { type: String, trim: true },
+    to: { type: String, required: true, trim: true },
+    changedBy: { type: mongoose.Schema.Types.ObjectId, ref: "AdminUser" },
+    changedByName: { type: String, trim: true },
+    changedAt: { type: Date, default: Date.now }
+  },
+  { _id: false }
+);
+
 const orderSchema = new mongoose.Schema(
   {
     reference: { type: String, required: true, unique: true, trim: true },
@@ -48,6 +60,7 @@ const orderSchema = new mongoose.Schema(
       default: "unpaid"
     },
     paymentReference: { type: String, trim: true },
+    statusHistory: [statusHistorySchema],
     source: { type: String, default: "website", trim: true }
   },
   { timestamps: true }

@@ -22,6 +22,14 @@ import { api } from "../api/client";
 import { clearAdminSession } from "../auth/adminSession";
 import AdminChatWidget from "../components/AdminChatWidget";
 import BearCoffeeLogo from "../components/BearCoffeeLogo";
+import {
+  latestHistoryEntry,
+  orderOptionsFor,
+  orderStatusOptions,
+  paymentOptionsFor,
+  reservationOptionsFor,
+  reservationStatusOptions
+} from "../utils/adminTransitions";
 import { imageAtWidth, imageUrlIssue } from "../utils/imageUrls";
 
 const emptyMenuForm = {
@@ -38,9 +46,6 @@ const emptyMenuForm = {
   sortOrder: ""
 };
 
-const statusOptions = ["new", "confirmed", "seated", "completed", "cancelled"];
-const orderStatusOptions = ["new", "accepted", "preparing", "ready", "completed", "cancelled"];
-const paymentStatusOptions = ["unpaid", "pending", "paid", "failed", "refunded"];
 const pageSize = 10;
 
 function menuItemToForm(item) {
@@ -478,7 +483,7 @@ function AdminDashboard() {
             </label>
             <select value={reservationStatus} onChange={(event) => setReservationStatus(event.target.value)} aria-label="Filter reservations by status">
               <option value="all">All statuses</option>
-              {statusOptions.map((option) => (
+              {reservationStatusOptions.map((option) => (
                 <option key={option} value={option}>
                   {option}
                 </option>
@@ -497,37 +502,42 @@ function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {visibleReservations.map((reservation) => (
-                  <tr key={reservation._id}>
-                    <td>
-                      <strong>{reservation.name}</strong>
-                      <span>{reservation.reference}</span>
-                    </td>
-                    <td>
-                      {reservation.date} · {reservation.time}
-                      <span>{reservation.guests} guests</span>
-                    </td>
-                    <td>
-                      {reservation.phone}
-                      <span>{reservation.occasion || "General visit"}</span>
-                    </td>
-                    <td>
-                      <select
-                        value={reservation.status}
-                        onChange={(event) => updateStatus(reservation._id, event.target.value)}
-                        disabled={busy.reservationId === reservation._id}
-                        aria-busy={busy.reservationId === reservation._id}
-                      >
-                        {statusOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                      {busy.reservationId === reservation._id ? <span className="row-action-note">Saving...</span> : null}
-                    </td>
-                  </tr>
-                ))}
+                {visibleReservations.map((reservation) => {
+                  const options = reservationOptionsFor(reservation.status);
+                  const isBusy = busy.reservationId === reservation._id;
+                  return (
+                    <tr key={reservation._id}>
+                      <td>
+                        <strong>{reservation.name}</strong>
+                        <span>{reservation.reference}</span>
+                      </td>
+                      <td>
+                        {reservation.date} · {reservation.time}
+                        <span>{reservation.guests} guests</span>
+                      </td>
+                      <td>
+                        {reservation.phone}
+                        <span>{reservation.occasion || "General visit"}</span>
+                      </td>
+                      <td>
+                        <select
+                          value={reservation.status}
+                          onChange={(event) => updateStatus(reservation._id, event.target.value)}
+                          disabled={isBusy || options.length <= 1}
+                          aria-busy={isBusy}
+                        >
+                          {options.map((option) => (
+                            <option key={option} value={option}>
+                              {option}
+                            </option>
+                          ))}
+                        </select>
+                        {isBusy ? <span className="row-action-note">Saving...</span> : null}
+                        <StatusHistory history={reservation.statusHistory} field="status" />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -593,6 +603,8 @@ function AdminDashboard() {
               <tbody>
                 {filteredOrders.map((order) => {
                   const orderBusy = busy.orderId === order._id;
+                  const statusChoices = orderOptionsFor(order.status);
+                  const paymentChoices = paymentOptionsFor(order.paymentStatus);
                   return (
                     <tr key={order._id}>
                       <td>
@@ -615,31 +627,33 @@ function AdminDashboard() {
                         <select
                           value={order.paymentStatus}
                           onChange={(event) => updateOrder(order._id, { paymentStatus: event.target.value })}
-                          disabled={orderBusy}
+                          disabled={orderBusy || paymentChoices.length <= 1}
                           aria-label={`Update payment for ${order.reference}`}
                         >
-                          {paymentStatusOptions.map((option) => (
+                          {paymentChoices.map((option) => (
                             <option key={option} value={option}>
                               {option}
                             </option>
                           ))}
                         </select>
                         <span>{order.paymentMethod === "cod" ? "COD" : "Online card"}</span>
+                        <StatusHistory history={order.statusHistory} field="paymentStatus" />
                       </td>
                       <td>
                         <select
                           value={order.status}
                           onChange={(event) => updateOrder(order._id, { status: event.target.value })}
-                          disabled={orderBusy}
+                          disabled={orderBusy || statusChoices.length <= 1}
                           aria-busy={orderBusy}
                         >
-                          {orderStatusOptions.map((option) => (
+                          {statusChoices.map((option) => (
                             <option key={option} value={option}>
                               {option}
                             </option>
                           ))}
                         </select>
                         {orderBusy ? <span className="row-action-note">Saving...</span> : null}
+                        <StatusHistory history={order.statusHistory} field="status" />
                       </td>
                     </tr>
                   );
@@ -811,6 +825,25 @@ function Metric({ label, value }) {
       <span>{label}</span>
       <strong>{value}</strong>
     </article>
+  );
+}
+
+function StatusHistory({ history, field }) {
+  const latest = latestHistoryEntry(history, field);
+
+  if (!latest) {
+    return null;
+  }
+
+  const actor = latest.changedByName ? ` by ${latest.changedByName}` : "";
+  const changedAt = latest.changedAt ? new Date(latest.changedAt).toLocaleString() : "";
+
+  return (
+    <span className="row-action-note">
+      Last: {latest.from} to {latest.to}
+      {actor}
+      {changedAt ? `, ${changedAt}` : ""}
+    </span>
   );
 }
 

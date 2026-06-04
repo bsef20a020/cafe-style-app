@@ -32,7 +32,7 @@ The current gaps are:
 
 This change will add:
 
-- A central SEO configuration with `VITE_SITE_URL`, defaulting to `https://noffelo.com`
+- A central SEO configuration with `VITE_SITE_URL`, defaulting to `https://noffelocafe.com`
 - Route-aware metadata for titles, descriptions, canonical paths, social sharing, robots directives, and JSON-LD
 - `noindex,nofollow` metadata for private or utility pages
 - Improved public page metadata for home, menu, our story, FAQ, and reservations
@@ -67,7 +67,7 @@ The app should keep one source of truth for:
 Production URL:
 
 - Read from `import.meta.env.VITE_SITE_URL`
-- Fall back to `https://noffelo.com`
+- Fall back to `https://noffelocafe.com`
 - Remove trailing slashes before building canonical URLs
 
 Indexable public routes:
@@ -145,6 +145,5 @@ Minimum verification:
 - Public routes produce the expected title, description, canonical URL, robots directive, and social tags
 - Private routes produce `noindex,nofollow`
 - JSON-LD scripts are valid JSON
-- `robots.txt` references `https://noffelo.com/sitemap.xml`
+- `robots.txt` references `https://noffelocafe.com/sitemap.xml`
 - `sitemap.xml` contains only indexable public routes
-

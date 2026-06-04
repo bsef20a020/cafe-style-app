@@ -22,6 +22,7 @@ import OrderStatusPage from "./pages/OrderStatusPage";
 import OurStoryPage from "./pages/OurStoryPage";
 import ReservePage from "./pages/ReservePage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import { getSeoForPath } from "./seo/siteMeta";
 import SignupPage from "./pages/SignupPage";
 
 function ScrollAndTrack() {
@@ -78,72 +79,11 @@ function CustomerUnauthorizedListener() {
   return null;
 }
 
-const routeMeta = {
-  "/": {
-    title: "NOFFELO — Cafe & Evening Lounge",
-    description: "NOFFELO is a premium cafe and evening lounge for slow coffee, refined desserts, and easy reservations."
-  },
-  "/menu": {
-    title: "Menu — NOFFELO",
-    description: "Explore NOFFELO drinks, desserts, bakery items, and evening lounge signatures."
-  },
-  "/our-story": {
-    title: "Our Story — NOFFELO",
-    description: "Discover the cafe-by-day and lounge-by-evening rhythm behind NOFFELO."
-  },
-  "/faq": {
-    title: "FAQ - NOFFELO",
-    description: "Practical questions about NOFFELO hours, reservations, online ordering, payment, and guest support."
-  },
-  "/reserve": {
-    title: "Reserve a Table — NOFFELO",
-    description: "Request a NOFFELO table with business-hour slots, booking reference, and WhatsApp follow-up."
-  },
-  "/login": {
-    title: "Customer Login — NOFFELO",
-    description: "Sign in to your NOFFELO customer account."
-  },
-  "/signup": {
-    title: "Create Account — NOFFELO",
-    description: "Create a NOFFELO customer account for faster checkout and reservations."
-  },
-  "/forgot-password": {
-    title: "Reset Password — NOFFELO",
-    description: "Request a secure password reset link for your NOFFELO customer account."
-  },
-  "/reset-password": {
-    title: "Choose New Password — NOFFELO",
-    description: "Set a new password for your NOFFELO customer account."
-  },
-  "/account": {
-    title: "Account — NOFFELO",
-    description: "View your NOFFELO orders, reservations, and customer details."
-  },
-  "/orders": {
-    title: "Order Status — NOFFELO",
-    description: "Track your NOFFELO online order status and payment state."
-  },
-  "/admin/login": {
-    title: "Staff Login — NOFFELO",
-    description: "Authorized NOFFELO staff portal."
-  },
-  "/admin": {
-    title: "Admin Dashboard — NOFFELO",
-    description: "NOFFELO private operations dashboard."
-  }
-};
-
 function RouteSeo() {
   const location = useLocation();
-  const meta =
-    routeMeta[location.pathname] ||
-    (location.pathname.startsWith("/orders/") ? routeMeta["/orders"] : null) ||
-    (location.pathname.startsWith("/reset-password/") ? routeMeta["/reset-password"] : null) || {
-      title: "NOFFELO",
-      description: "NOFFELO cafe and evening lounge."
-    };
+  const meta = getSeoForPath(location.pathname);
 
-  return <SeoMeta {...meta} path={location.pathname} />;
+  return <SeoMeta {...meta} />;
 }
 
 function App() {

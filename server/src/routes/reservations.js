@@ -22,6 +22,7 @@ const OPEN_MINUTES = 9 * 60;
 const CLOSE_MINUTES = 23 * 60;
 const SLOT_INTERVAL_MINUTES = 30;
 const CAFE_TIMEZONE_OFFSET = "+05:00";
+const ACTIVE_SLOT_STATUSES = ["new", "confirmed", "seated"];
 
 function minutesFromTime(value) {
   const [hours, minutes] = value.split(":").map(Number);
@@ -49,6 +50,47 @@ function normalizePhone(value) {
 
 function phonesMatch(left, right) {
   return normalizePhone(left) === normalizePhone(right);
+}
+
+function slotCapacityError(remainingGuests) {
+  const error = new Error("reservation_slot_full");
+  error.status = 409;
+  error.details = {
+    time: [
+      remainingGuests > 0
+        ? `This slot only has room for ${remainingGuests} more guest${remainingGuests === 1 ? "" : "s"}. Choose another time or reduce guests.`
+        : "This slot is fully booked. Choose another time."
+    ]
+  };
+  return error;
+}
+
+async function reservedGuestsForSlot({ date, time, excludeReservationId }) {
+  const match = {
+    date,
+    time,
+    status: { $in: ACTIVE_SLOT_STATUSES }
+  };
+
+  if (excludeReservationId) {
+    match._id = { $ne: excludeReservationId };
+  }
+
+  const [slot] = await Reservation.aggregate([
+    { $match: match },
+    { $group: { _id: null, guests: { $sum: "$guests" } } }
+  ]);
+
+  return slot?.guests || 0;
+}
+
+async function assertSlotHasCapacity({ date, time, guests, excludeReservationId }) {
+  const reservedGuests = await reservedGuestsForSlot({ date, time, excludeReservationId });
+  const remainingGuests = Math.max(0, env.RESERVATION_SLOT_CAPACITY - reservedGuests);
+
+  if (guests > remainingGuests) {
+    throw slotCapacityError(remainingGuests);
+  }
 }
 
 const reservationSchemaBase = z.object({
@@ -104,6 +146,8 @@ router.post(
   validateBody(reservationSchema),
   asyncHandler(async (req, res) => {
     const { verificationPhone: _verificationPhone, ...reservationBody } = req.body;
+    await assertSlotHasCapacity(reservationBody);
+
     const reservation = await Reservation.create({
       ...reservationBody,
       customerUser: req.customerUser?._id,
@@ -189,6 +233,11 @@ router.patch(
         }
       });
     }
+
+    await assertSlotHasCapacity({
+      ...updateBody,
+      excludeReservationId: reservation._id
+    });
 
     Object.assign(reservation, updateBody, { status: "new" });
     await reservation.save();

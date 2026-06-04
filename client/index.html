@@ -6,31 +6,74 @@
     <meta name="theme-color" content="#536b52" />
     <meta
       name="description"
-      content="NOFFELO is a premium cafe and evening lounge experience with dynamic reservations, menu, and admin operations."
+      content="NOFFELO is a premium Lahore cafe and evening lounge for slow coffee, refined desserts, online ordering, and easy reservations."
     />
-    <meta property="og:title" content="NOFFELO — Cafe & Evening Lounge" />
+    <meta name="robots" content="index,follow" />
+    <meta property="og:title" content="NOFFELO - Cafe & Evening Lounge in Lahore" />
     <meta
       property="og:description"
-      content="Premium cafe and evening lounge for slow coffee, refined desserts, and easy reservations."
+      content="Visit NOFFELO for slow coffee, refined desserts, online ordering, and easy table reservations in a polished Lahore cafe and lounge."
     />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://noffelocafe.com/" />
+    <meta property="og:site_name" content="NOFFELO" />
     <meta
       property="og:image"
       content="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80"
     />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="NOFFELO - Cafe & Evening Lounge in Lahore" />
+    <meta
+      name="twitter:description"
+      content="Slow coffee, refined desserts, online ordering, and easy reservations at NOFFELO."
+    />
+    <meta
+      name="twitter:image"
+      content="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80"
+    />
+    <link rel="canonical" href="https://noffelocafe.com/" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://images.unsplash.com" />
-    <title>NOFFELO — Cafe & Evening Lounge</title>
+    <title>NOFFELO - Cafe & Evening Lounge in Lahore</title>
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Restaurant",
-        "name": "NOFFELO",
-        "servesCuisine": ["Cafe", "Dessert", "Coffee"],
-        "description": "Premium cafe and evening lounge experience with reservations and a dynamic menu.",
-        "priceRange": "PKR",
-        "openingHours": "Mo-Su 09:00-23:00"
+        "@graph": [
+          {
+            "@type": "Restaurant",
+            "@id": "https://noffelocafe.com/#restaurant",
+            "name": "NOFFELO",
+            "url": "https://noffelocafe.com/",
+            "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80",
+            "servesCuisine": ["Cafe", "Coffee", "Dessert", "Bakery"],
+            "description": "NOFFELO is a premium Lahore cafe and evening lounge for slow coffee, refined desserts, online ordering, and easy reservations.",
+            "priceRange": "PKR",
+            "telephone": "+923001234567",
+            "openingHours": "Mo-Su 09:00-23:00",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "MM Alam Road",
+              "addressLocality": "Lahore",
+              "addressCountry": "PK"
+            },
+            "hasMenu": "https://noffelocafe.com/menu",
+            "potentialAction": {
+              "@type": "ReserveAction",
+              "target": "https://noffelocafe.com/reserve",
+              "name": "Reserve a table"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://noffelocafe.com/#website",
+            "name": "NOFFELO",
+            "url": "https://noffelocafe.com/",
+            "description": "NOFFELO is a premium Lahore cafe and evening lounge for slow coffee, refined desserts, online ordering, and easy reservations.",
+            "publisher": {
+              "@id": "https://noffelocafe.com/#restaurant"
+            }
+          }
+        ]
       }
     </script>
   </head>
