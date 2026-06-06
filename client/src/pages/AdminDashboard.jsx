@@ -2,6 +2,7 @@ import {
   AlertCircle,
   BarChart3,
   CheckCircle2,
+  Clock,
   Coffee,
   Edit3,
   ChevronLeft,
@@ -16,7 +17,7 @@ import {
   X,
   Trash2
 } from "lucide-react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import { clearAdminSession } from "../auth/adminSession";
@@ -125,6 +126,9 @@ function AdminDashboard() {
   const [menuSearch, setMenuSearch] = useState("");
   const [menuCategory, setMenuCategory] = useState("all");
   const [menuAvailability, setMenuAvailability] = useState("all");
+  const [lastSynced, setLastSynced] = useState(null);
+  const [syncLabel, setSyncLabel] = useState("");
+  const syncTimer = useRef(null);
 
   const loadAdminData = useCallback(async () => {
     setState((current) => ({ ...current, loading: true, error: "" }));
@@ -146,6 +150,7 @@ function AdminDashboard() {
         error: ""
       });
       setConfirmDeleteId("");
+      setLastSynced(new Date());
     } catch (error) {
       if (error.status === 401) {
         clearAdminSession();
@@ -159,6 +164,41 @@ function AdminDashboard() {
   useEffect(() => {
     loadAdminData();
   }, [loadAdminData]);
+
+  // Background polling — silently refresh orders & reservations every 60 s
+  useEffect(() => {
+    const id = setInterval(async () => {
+      try {
+        const [reservations, orders] = await Promise.all([
+          api.getAdminReservations(),
+          api.getAdminOrders()
+        ]);
+        setState((current) => ({
+          ...current,
+          reservations: reservations.reservations || current.reservations,
+          orders: orders.orders || current.orders
+        }));
+        setLastSynced(new Date());
+      } catch {
+        // silent — stale data is still usable; network errors shown on manual refresh
+      }
+    }, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  // Keep "Updated Xs ago" label fresh every 10 s
+  useEffect(() => {
+    function tick() {
+      if (!lastSynced) { setSyncLabel(""); return; }
+      const diff = Math.floor((Date.now() - lastSynced.getTime()) / 1000);
+      if (diff < 5)  { setSyncLabel("Updated just now"); return; }
+      if (diff < 60) { setSyncLabel(`Updated ${diff}s ago`); return; }
+      setSyncLabel(`Updated ${Math.floor(diff / 60)}m ago`);
+    }
+    tick();
+    syncTimer.current = setInterval(tick, 10_000);
+    return () => clearInterval(syncTimer.current);
+  }, [lastSynced]);
 
   const metrics = useMemo(
     () => ({
@@ -413,10 +453,16 @@ function AdminDashboard() {
           <a href="#reservations">
             <CheckCircle2 size={18} />
             Reservations
+            {metrics.pendingReservations > 0 && (
+              <span className="admin-nav-badge">{metrics.pendingReservations}</span>
+            )}
           </a>
           <a href="#orders">
             <PackageCheck size={18} />
             Orders
+            {metrics.pendingOrders > 0 && (
+              <span className="admin-nav-badge">{metrics.pendingOrders}</span>
+            )}
           </a>
           <a href="#menu-admin">
             <Coffee size={18} />
@@ -435,10 +481,18 @@ function AdminDashboard() {
             <span className="section-kicker">Live operations</span>
             <h1>Orders, reservations, and menu control</h1>
           </div>
-          <button className="button compact-button" type="button" onClick={loadAdminData} disabled={state.loading}>
-            {state.loading ? <Loader2 className="spin" size={16} /> : <RefreshCcw size={16} />}
-            Refresh
-          </button>
+          <div className="admin-header-refresh">
+            {syncLabel && !state.loading && (
+              <span className="sync-label">
+                <Clock size={13} />
+                {syncLabel}
+              </span>
+            )}
+            <button className="button compact-button" type="button" onClick={loadAdminData} disabled={state.loading}>
+              {state.loading ? <Loader2 className="spin" size={16} /> : <RefreshCcw size={16} />}
+              Refresh
+            </button>
+          </div>
         </div>
 
         {notice.message ? (

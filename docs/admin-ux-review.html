@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<title>NOFFELO — Admin Dashboard UX Review</title>
+<style>
+
+/* ── FONTS & RESET ─────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
+
+*{box-sizing:border-box;margin:0;padding:0;}
+html{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+body{
+  font-family:'Inter',sans-serif;
+  font-size:13px;
+  line-height:1.6;
+  color:#1a1c18;
+  background:#fff;
+}
+
+/* ── PAGE STRUCTURE ────────────────────────────────────────── */
+.page{
+  width:210mm;
+  min-height:297mm;
+  margin:0 auto;
+  background:#fff;
+  position:relative;
+  overflow:hidden;
+}
+
+@media print{
+  .page{
+    width:210mm;
+    min-height:297mm;
+    page-break-after:always;
+    margin:0;
+  }
+  .page:last-child{page-break-after:auto;}
+}
+
+/* ── COVER ─────────────────────────────────────────────────── */
+.cover{
+  width:210mm;
+  min-height:297mm;
+  display:flex;
+  flex-direction:column;
+  background:#1a1c18;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+
+.cover-accent{
+  position:absolute;
+  top:-80px;right:-80px;
+  width:420px;height:420px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(83,107,82,0.55) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.cover-accent-2{
+  position:absolute;
+  bottom:-60px;left:-60px;
+  width:300px;height:300px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(182,145,85,0.25) 0%,transparent 70%);
+  pointer-events:none;
+}
+
+.cover-top{
+  padding:48px 52px 0;
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+}
+
+.cover-brand{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.cover-brand-dot{
+  width:9px;height:9px;
+  border-radius:50%;
+  background:#536b52;
+}
+
+.cover-brand span{
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.55);
+}
+
+.cover-doc-type{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.38);
+  text-align:right;
+  line-height:1.6;
+}
+
+.cover-body{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:0 52px;
+}
+
+.cover-tag{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 14px;
+  border:1px solid rgba(83,107,82,0.5);
+  border-radius:100px;
+  margin-bottom:28px;
+  width:fit-content;
+}
+
+.cover-tag span{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:#88a886;
+}
+
+.cover-tag-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:#536b52;
+}
+
+.cover h1{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:58px;
+  font-weight:800;
+  line-height:1.05;
+  letter-spacing:-0.5px;
+  color:#fff;
+  margin-bottom:22px;
+  max-width:500px;
+}
+
+.cover h1 em{
+  font-style:italic;
+  color:#88a886;
+}
+
+.cover-sub{
+  font-size:15px;
+  color:rgba(255,255,255,0.52);
+  line-height:1.65;
+  max-width:430px;
+  font-weight:400;
+  margin-bottom:52px;
+}
+
+.cover-stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:rgba(255,255,255,0.1);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:12px;
+  overflow:hidden;
+  max-width:440px;
+}
+
+.cover-stat{
+  background:#1a1c18;
+  padding:20px 22px;
+}
+
+.cover-stat strong{
+  display:block;
+  font-size:34px;
+  font-weight:800;
+  color:#88a886;
+  line-height:1;
+  margin-bottom:4px;
+}
+
+.cover-stat span{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.38);
+}
+
+.cover-footer{
+  padding:28px 52px;
+  border-top:1px solid rgba(255,255,255,0.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.cover-footer-left{
+  font-size:11px;
+  color:rgba(255,255,255,0.35);
+  font-weight:500;
+}
+
+.cover-footer-right{
+  font-size:11px;
+  color:rgba(255,255,255,0.35);
+  font-weight:500;
+}
+
+/* ── INTERIOR PAGE HEADER ──────────────────────────────────── */
+.page-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 44px;
+  border-bottom:1px solid #e8e5de;
+}
+
+.ph-brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.ph-brand-dot{
+  width:7px;height:7px;
+  border-radius:50%;
+  background:#536b52;
+}
+
+.ph-brand span{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:#a0a89a;
+}
+
+.ph-right{
+  font-size:10px;
+  font-weight:600;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  color:#c4bfb3;
+}
+
+/* ── INTERIOR PAGE FOOTER ──────────────────────────────────── */
+.page-footer{
+  position:absolute;
+  bottom:0;left:0;right:0;
+  padding:18px 44px;
+  border-top:1px solid #e8e5de;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.pf-label{
+  font-size:10px;
+  font-weight:500;
+  color:#c4bfb3;
+}
+
+.pf-num{
+  font-size:10px;
+  font-weight:700;
+  color:#a0a89a;
+}
+
+/* ── INTERIOR CONTENT ──────────────────────────────────────── */
+.page-content{
+  padding:36px 44px 80px;
+}
+
+/* ── SECTION TITLE ─────────────────────────────────────────── */
+.section-eyebrow{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:0.13em;
+  text-transform:uppercase;
+  color:#536b52;
+  margin-bottom:8px;
+}
+
+.section-title{
+  font-family:'Playfair Display',Georgia,serif;
+  font-size:30px;
+  font-weight:800;
+  color:#1a1c18;
+  line-height:1.1;
+  margin-bottom:6px;
+}
+
+.section-desc{
+  font-size:13px;
+  color:#6b6b62;
+  max-width:540px;
+  line-height:1.65;
+  margin-bottom:28px;
+}
+
+/* ── SUMMARY TABLE ─────────────────────────────────────────── */
+.summary-table{
+  width:100%;
+  border-collapse:collapse;
+  border:1px solid #e8e5de;
+  border-radius:10px;
+  overflow:hidden;
+  font-size:12px;
+}
+
+.summary-table thead tr{
+  background:#1a1c18;
+}
+
+.summary-table th{
+  padding:10px 14px;
+  text-align:left;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.6);
+}
+
+.summary-table td{
+  padding:10px 14px;
+  border-bottom:1px solid #eeebe3;
+  color:#3a3c38;
+  font-size:12px;
+  line-height:1.45;
+  vertical-align:middle;
+}
+
+.summary-table tr:last-child td{border-bottom:0;}
+.summary-table tr:nth-child(even) td{background:#f9f7f2;}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  padding:3px 9px;
+  border-radius:100px;
+  font-size:9.5px;
+  font-weight:700;
+  letter-spacing:0.04em;
+  white-space:nowrap;
+}
+.b-crit{background:#fde8e2;color:#9a3412;}
+.b-high{background:#fef3d8;color:#7a5010;}
+.b-med {background:#e8f0e6;color:#2d5230;}
+.b-low {background:#f0eee8;color:#7a7870;}
+
+/* ── ISSUE CARDS ───────────────────────────────────────────── */
+.issue-card{
+  border:1px solid #e8e5de;
+  border-radius:10px;
+  overflow:hidden;
+  margin-bottom:16px;
+  background:#fff;
+}
+
+.issue-card-head{
+  display:grid;
+  grid-template-columns:36px 1fr auto;
+  align-items:center;
+  gap:12px;
+  padding:13px 16px;
+  background:#f9f7f2;
+  border-bottom:1px solid #e8e5de;
+}
+
+.issue-num{
+  width:36px;height:36px;
+  border-radius:8px;
+  background:#1a1c18;
+  color:#fff;
+  display:grid;
+  place-items:center;
+  font-size:13px;
+  font-weight:800;
+  flex-shrink:0;
+}
+
+.issue-title{
+  font-size:13px;
+  font-weight:700;
+  color:#1a1c18;
+  line-height:1.35;
+}
+
+.issue-body{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+}
+
+.issue-col{
+  padding:14px 16px;
+  border-right:1px solid #eeebe3;
+}
+.issue-col:last-child{border-right:0;}
+
+.ic-label{
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+.ic-prob{color:#9a3412;}
+.ic-why {color:#b86f52;}
+.ic-fix {color:#536b52;}
+
+.issue-col p,.issue-col li{
+  font-size:11.5px;
+  color:#5a5c56;
+  line-height:1.58;
+}
+
+.issue-col ul{padding-left:14px;}
+.issue-col li{margin-bottom:3px;}
+
+.after-box{
+  margin:0 16px 14px;
+  padding:11px 14px;
+  background:#f2f6f0;
+  border-left:3px solid #536b52;
+  border-radius:0 6px 6px 0;
+}
+
+.after-label{
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:#536b52;
+  margin-bottom:4px;
+}
+
+.after-box p{
+  font-size:11.5px;
+  color:#4a5c48;
+  line-height:1.5;
+}
+
+.after-box strong{color:#1a1c18;}
+
+/* ── CHAPTER HEADER BAND ───────────────────────────────────── */
+.chapter-band{
+  background:#1a1c18;
+  padding:18px 44px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin:-36px -44px 28px;
+}
+
+.cb-left{}
+.cb-num{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.4);
+  margin-bottom:3px;
+}
+.cb-title{
+  font-size:17px;
+  font-weight:800;
+  color:#fff;
+}
+
+.cb-badge{
+  padding:6px 14px;
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:100px;
+  font-size:10px;
+  font-weight:600;
+  color:rgba(255,255,255,0.5);
+}
+
+/* ── DIVIDER ───────────────────────────────────────────────── */
+.divider{
+  height:1px;
+  background:#e8e5de;
+  margin:24px 0;
+}
+
+/* ── ROADMAP ───────────────────────────────────────────────── */
+.roadmap-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.rcard{
+  border:1px solid #e8e5de;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.rcard-head{
+  padding:13px 16px;
+  background:#1a1c18;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
+.rcard-head strong{
+  font-size:13px;
+  font-weight:700;
+  color:#fff;
+}
+
+.rcard-week{
+  font-size:10px;
+  font-weight:600;
+  color:rgba(255,255,255,0.4);
+}
+
+.rcard-body{padding:14px 16px;}
+
+.ritem{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:9px;
+}
+
+.ritem:last-child{margin-bottom:0;}
+
+.rdot{
+  width:7px;height:7px;
+  border-radius:50%;
+  flex-shrink:0;
+  margin-top:4px;
+}
+
+.d-red   {background:#b86f52;}
+.d-amber {background:#b69155;}
+.d-green {background:#536b52;}
+.d-grey  {background:#c0bdb5;}
+
+.ritem p{
+  font-size:11.5px;
+  color:#5a5c56;
+  line-height:1.5;
+}
+
+.ritem strong{color:#1a1c18;}
+
+.rcard-footer{
+  padding:10px 16px;
+  border-top:1px solid #e8e5de;
+  font-size:10px;
+  font-weight:600;
+  color:#a0a89a;
+  background:#f9f7f2;
+}
+
+/* ── KEY PRINCIPLE BOXES ───────────────────────────────────── */
+.kp-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:12px;
+  margin-top:20px;
+}
+
+.kp-box{
+  padding:16px;
+  border:1px solid #e8e5de;
+  border-radius:10px;
+  background:#f9f7f2;
+}
+
+.kp-icon{
+  width:32px;height:32px;
+  border-radius:8px;
+  display:grid;
+  place-items:center;
+  margin-bottom:10px;
+  font-size:15px;
+}
+
+.kp-icon-red   {background:#fde8e2;}
+.kp-icon-amber {background:#fef3d8;}
+.kp-icon-green {background:#e8f0e6;}
+
+.kp-box h4{
+  font-size:12px;
+  font-weight:700;
+  color:#1a1c18;
+  margin-bottom:4px;
+}
+
+.kp-box p{
+  font-size:11px;
+  color:#6b6b62;
+  line-height:1.55;
+}
+
+/* ── DEV NOTE ──────────────────────────────────────────────── */
+.dev-note{
+  display:flex;
+  gap:16px;
+  align-items:flex-start;
+  padding:18px;
+  background:#f2f6f0;
+  border:1px solid #c8d8c4;
+  border-radius:10px;
+  margin-top:22px;
+}
+
+.dev-note-icon{
+  width:38px;height:38px;
+  border-radius:8px;
+  background:#536b52;
+  display:grid;
+  place-items:center;
+  color:#fff;
+  font-size:17px;
+  flex-shrink:0;
+}
+
+.dev-note h4{
+  font-size:13px;
+  font-weight:700;
+  color:#1a1c18;
+  margin-bottom:5px;
+}
+
+.dev-note p{
+  font-size:11.5px;
+  color:#4a5c48;
+  line-height:1.58;
+}
+
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════════
+     PAGE 1 — COVER
+════════════════════════════════════════════════ -->
+<div class="page cover">
+  <div class="cover-accent"></div>
+  <div class="cover-accent-2"></div>
+
+  <div class="cover-top">
+    <div class="cover-brand">
+      <div class="cover-brand-dot"></div>
+      <span>NOFFELO Cafe &nbsp;·&nbsp; Internal Brief</span>
+    </div>
+    <div class="cover-doc-type">
+      UX / UI Design Review<br>Admin Dashboard v2
+    </div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-tag">
+      <div class="cover-tag-dot"></div>
+      <span>Design &amp; Product Brief</span>
+    </div>
+
+    <h1>Admin Panel<br><em>Fix List &amp;<br>Redesign Plan</em></h1>
+
+    <p class="cover-sub">
+      A plain-English walkthrough of everything that needs improvement in the
+      NOFFELO admin dashboard — what's broken, why it matters, and exactly
+      what to build instead.
+    </p>
+
+    <div class="cover-stats">
+      <div class="cover-stat">
+        <strong>13</strong>
+        <span>Issues Found</span>
+      </div>
+      <div class="cover-stat">
+        <strong>4</strong>
+        <span>Priority Levels</span>
+      </div>
+      <div class="cover-stat">
+        <strong>4wk</strong>
+        <span>Roadmap</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-footer-left">Prepared June 2026 &nbsp;·&nbsp; For Developer Handoff</div>
+    <div class="cover-footer-right">Confidential — Internal Use Only</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PAGE 2 — SUMMARY + KEY PRINCIPLES
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-brand">
+      <div class="ph-brand-dot"></div>
+      <span>NOFFELO — Admin UX Review</span>
+    </div>
+    <div class="ph-right">Overview</div>
+  </div>
+
+  <div class="page-content">
+    <div class="section-eyebrow">Overview</div>
+    <div class="section-title">All 13 Issues at a Glance</div>
+    <p class="section-desc">Every issue found in the current admin panel, sorted by priority. Critical issues need to be fixed before anything else — they directly cause missed orders and lost information.</p>
+
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th width="28">#</th>
+          <th>Issue Description</th>
+          <th width="110">Area</th>
+          <th width="78">Priority</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td>No live alerts — admins miss new orders without manually clicking Refresh</td>
+          <td>Real-time</td>
+          <td><span class="badge b-crit">Critical</span></td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>Success/error message disappears the moment you do another action</td>
+          <td>Feedback</td>
+          <td><span class="badge b-crit">Critical</span></td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>New orders and completed orders look visually identical — no urgency signal</td>
+          <td>Status Colors</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Metric cards sit in a broken 4+2 layout and show no urgency when pending</td>
+          <td>Layout</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Add Menu Item form is permanently open, pushing the item list far down</td>
+          <td>Layout</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Sidebar has no active highlight and no pending-count badges on nav links</td>
+          <td>Navigation</td>
+          <td><span class="badge b-high">High</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>Tables cannot be sorted by date, guest count, or order total</td>
+          <td>Filters</td>
+          <td><span class="badge b-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>Orders table has no pagination — 200+ rows will crash performance</td>
+          <td>Scalability</td>
+          <td><span class="badge b-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Status history line is a long, hard-to-scan sentence with full timestamps</td>
+          <td>Typography</td>
+          <td><span class="badge b-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Delete confirmation looks like a normal button — easy to miss or misclick</td>
+          <td>Safety</td>
+          <td><span class="badge b-med">Medium</span></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>On mobile, sidebar becomes a full-height block before any content shows</td>
+          <td>Mobile</td>
+          <td><span class="badge b-low">Low</span></td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Empty tables still show column headers — looks like a loading error</td>
+          <td>Empty States</td>
+          <td><span class="badge b-low">Low</span></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Add Item form has 10+ flat fields with no grouping — all feel equal weight</td>
+          <td>Forms</td>
+          <td><span class="badge b-low">Low</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="kp-grid">
+      <div class="kp-box">
+        <div class="kp-icon kp-icon-red">⚡</div>
+        <h4>Critical (Fix First)</h4>
+        <p>2 issues that directly cause missed orders and confusing feedback. Must be resolved before anything else.</p>
+      </div>
+      <div class="kp-box">
+        <div class="kp-icon kp-icon-amber">▲</div>
+        <h4>High Priority (Week 1)</h4>
+        <p>4 structural problems that slow down the admin every single day. Biggest daily impact per dev hour.</p>
+      </div>
+      <div class="kp-box">
+        <div class="kp-icon kp-icon-green">◆</div>
+        <h4>Medium &amp; Low (Week 2–4)</h4>
+        <p>7 quality improvements that matter more as the business grows. No blockers today, painful next month.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-label">NOFFELO Admin UX Review · June 2026</div>
+    <div class="pf-num">02</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PAGE 3 — CRITICAL ISSUES
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-brand">
+      <div class="ph-brand-dot"></div>
+      <span>NOFFELO — Admin UX Review</span>
+    </div>
+    <div class="ph-right">Chapter 01 — Critical Issues</div>
+  </div>
+
+  <div class="page-content">
+    <div class="chapter-band">
+      <div class="cb-left">
+        <div class="cb-num">Chapter 01</div>
+        <div class="cb-title">Critical Issues — Fix These First</div>
+      </div>
+      <div class="cb-badge">2 Issues</div>
+    </div>
+
+    <p class="section-desc" style="margin-bottom:20px;">These two issues directly cause missed orders and confusing feedback for the admin. They must be resolved before anything else is touched.</p>
+
+    <!-- Issue 1 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">1</div>
+        <div class="issue-title">No live alerts — admins don't know when a new order arrives</div>
+        <span class="badge b-crit">Critical</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>The dashboard only updates when you manually click "Refresh." If you don't click it, you have no idea a new order or reservation came in. In a live cafe, this can mean a table waits 10–15 minutes before the kitchen even knows about the order.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Customers wait longer than they should. Kitchen staff get behind. Frustrated guests complain. The entire purpose of a live admin panel is to react fast — right now it only reacts when someone remembers to click Refresh.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Every 60 seconds, silently check for new orders in the background — no page reload</li>
+            <li>If new orders arrive, show a green badge on the Orders sidebar link: "Orders ● 3"</li>
+            <li>Show "Updated 28s ago" near the Refresh button so admin trusts the data is fresh</li>
+            <li>No visual disruption — just quiet counts updating</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Sidebar shows <strong>"Orders ● 3"</strong> with a green dot when 3 new orders came in. Admin sees it immediately without touching anything. Header shows <strong>"Updated 28s ago"</strong> so they know data is fresh.</p>
+      </div>
+    </div>
+
+    <!-- Issue 2 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">2</div>
+        <div class="issue-title">Success/error message disappears the moment you do another action</div>
+        <span class="badge b-crit">Critical</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>There is one single notification bar at the top of the page. When you confirm a reservation it shows "Reservation updated." But the moment you change an order's status, it replaces the message. You never see both — the first one is gone forever.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Admins doing quick back-to-back updates during busy hours lose confidence: "Did that reservation actually get confirmed?" They end up refreshing the whole page to double-check — wasting precious time during a rush.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Replace the single bar with a <strong>toast stack</strong> in the top-right corner</li>
+            <li>Each action gets its own toast — they stack vertically, never overwrite</li>
+            <li>Each toast disappears automatically after 4 seconds, or tap X to dismiss early</li>
+            <li>Green toasts for success, red for errors — up to 3 visible at once</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Top-right shows two stacked cards: <strong>✓ "Reservation confirmed"</strong> and below it <strong>✓ "Order updated."</strong> Both visible. Both fade after 4 seconds. Admin can trust every action was recorded.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-label">NOFFELO Admin UX Review · June 2026</div>
+    <div class="pf-num">03</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PAGE 4 — HIGH PRIORITY ISSUES
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-brand">
+      <div class="ph-brand-dot"></div>
+      <span>NOFFELO — Admin UX Review</span>
+    </div>
+    <div class="ph-right">Chapter 02 — High Priority</div>
+  </div>
+
+  <div class="page-content">
+    <div class="chapter-band">
+      <div class="cb-left">
+        <div class="cb-num">Chapter 02</div>
+        <div class="cb-title">High Priority — Fix in Week 1</div>
+      </div>
+      <div class="cb-badge">4 Issues</div>
+    </div>
+
+    <!-- Issue 3 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">3</div>
+        <div class="issue-title">New orders and completed orders look visually identical</div>
+        <span class="badge b-high">High</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>Every row in the orders and reservations tables looks the same — same background, same text color. A "new" order that needs immediate action looks identical to a "completed" one from yesterday.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Admin must read every row's status dropdown to find what needs attention. With 30+ rows, this takes real effort. The eyes have no visual anchor to jump to.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li><strong>New rows:</strong> amber left-border strip + very faint amber background</li>
+            <li><strong>Completed/cancelled rows:</strong> dimmed to 70% opacity — they visually recede</li>
+            <li>No dropdown or logic changes — purely CSS visual treatment</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Admin opens Orders — immediately sees 3 rows with a golden left stripe. Those are the new ones. The rest are lighter, clearly "done." Zero reading needed to find what requires action.</p>
+      </div>
+    </div>
+
+    <!-- Issue 4 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">4</div>
+        <div class="issue-title">Metric cards sit in a broken grid with no urgency when items are pending</div>
+        <span class="badge b-high">High</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>6 metric cards use a 4-column layout — giving 4 cards on row 1 and 2 wide orphaned cards on row 2. Also, "New requests: 3" and "Total reservations: 47" look exactly the same.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>The top of the dashboard is the first thing seen every shift. Right now it gives no signal about what needs attention today. Just numbers that all feel equal weight.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Switch to a 3-column grid — two clean rows of 3 cards</li>
+            <li>When "New orders" or "New requests" &gt; 0: amber left border, amber number</li>
+            <li>When zero: those cards look completely normal — no alarm state</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>6 cards in a clean 3×2 grid. <strong>"New orders: 4"</strong> has a golden border and colored number. <strong>"Available items: 23"</strong> looks normal. Admin knows in one glance what needs handling today.</p>
+      </div>
+    </div>
+
+    <!-- Issue 5 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">5</div>
+        <div class="issue-title">Add Menu Item form is always visible, even when just browsing</div>
+        <span class="badge b-high">High</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>The 10-field "Add Item" form sits permanently at the top of the Menu section. Every time you scroll there, this giant form takes up 200px of space even when you're just browsing or editing existing items.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Pushes the actual item list far down the page. When editing an existing item, you scroll past the add-form to reach the list. It's visual clutter 95% of the time.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Add a small <strong>"+ Add Item"</strong> button in the section header</li>
+            <li>Form is collapsed by default — only appears when that button is clicked</li>
+            <li>Successfully adding an item collapses the form automatically</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Menu section opens showing the search bar and item list immediately. A compact <strong>"+ Add Item"</strong> button sits in the header. Click it → form slides open. Close it → item list is right there.</p>
+      </div>
+    </div>
+
+    <!-- Issue 6 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">6</div>
+        <div class="issue-title">Sidebar nav has no active highlight and no count badges</div>
+        <span class="badge b-high">High</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>All four sidebar links always look identical regardless of which section you're viewing. There's also nothing to tell you "3 new things are in Orders" without scrolling down to check manually.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Admin loses spatial orientation on this long-scrolling page. More importantly, they must actively visit each section to discover if there's new activity — the sidebar should do that job for them.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>As you scroll, the active sidebar link gets a green highlight automatically</li>
+            <li>If Orders has 3 pending items: sidebar shows <strong>"Orders ③"</strong></li>
+            <li>Same for Reservations with pending count</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Admin glances at sidebar: <strong>"Reservations"</strong> is highlighted (currently in that section), <strong>"Orders"</strong> shows a green <strong>4</strong> badge. Without scrolling anywhere, they know exactly where action is needed.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-label">NOFFELO Admin UX Review · June 2026</div>
+    <div class="pf-num">04</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PAGE 5 — MEDIUM PRIORITY
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-brand">
+      <div class="ph-brand-dot"></div>
+      <span>NOFFELO — Admin UX Review</span>
+    </div>
+    <div class="ph-right">Chapter 03 — Medium Priority</div>
+  </div>
+
+  <div class="page-content">
+    <div class="chapter-band">
+      <div class="cb-left">
+        <div class="cb-num">Chapter 03</div>
+        <div class="cb-title">Medium Priority — Fix in Week 2</div>
+      </div>
+      <div class="cb-badge">4 Issues</div>
+    </div>
+
+    <!-- Issue 7 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">7</div>
+        <div class="issue-title">Tables cannot be sorted — you can't find newest or biggest orders</div>
+        <span class="badge b-med">Medium</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>You can filter by status and search by name, but you cannot sort by anything — not by date, not by guest count, not by order total. Rows appear in whatever random order the server sends.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Most common workflow: "Show me today's newest reservations first." Or: "Which order is the largest?" Both impossible. Admin must mentally scan every row.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Clickable column headers — once for ascending, again for descending</li>
+            <li>Small ↑ or ↓ arrow shows current sort direction</li>
+            <li>Works alongside existing search and status filter</li>
+            <li>No server change — sorting happens on already-loaded data</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Click "Visit" column header → reservations sort newest first, <strong>↓</strong> arrow appears. Click again → oldest first. Works on top of any active search filter.</p>
+      </div>
+    </div>
+
+    <!-- Issue 8 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">8</div>
+        <div class="issue-title">Orders table has no pagination — will break with high volume</div>
+        <span class="badge b-med">Medium</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>Reservations show 10 per page with Previous/Next navigation. Orders show every single order in one endless list. A busy weekend means 100+ rows on one page.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Browser slows down rendering hundreds of rows. Scrolling becomes painful. The page feels broken. It's also inconsistent — Reservations are paginated, Orders are not.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Apply the exact same 10-per-page pagination from Reservations to Orders</li>
+            <li>Same Previous/Next buttons, same "Page 1 of 5" counter</li>
+            <li>This is essentially a copy-paste job — the logic already exists</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Orders shows 10 rows. Bottom-right shows <strong>"Page 1 of 8"</strong> with ‹ › buttons. Fast, clean, consistent with Reservations.</p>
+      </div>
+    </div>
+
+    <!-- Issue 9 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">9</div>
+        <div class="issue-title">Status history text is a long sentence — hard to scan at speed</div>
+        <span class="badge b-med">Medium</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>Below each status dropdown, there's text like: <em>"Last: new to confirmed by Admin, 6/5/2026, 11:30:00 AM"</em> — a full sentence crammed into a small table cell, with seconds in the timestamp.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Tables should be fast to scan. Long strings force you to read instead of glance. The full date + seconds is noise — all you need is "how long ago." The sentence structure adds zero value.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Shorten to: <strong>"→ confirmed · 2h ago"</strong></li>
+            <li>Hover over it to see full detail in a tooltip: "by Admin on Jun 5, 11:30 AM"</li>
+            <li>Relative time (2h ago, 3d ago) is faster to understand than absolute dates</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Below the status dropdown: a small muted line reading <strong>"→ confirmed · 2h ago"</strong>. Hover over it: tooltip shows <em>"Changed by Admin on Jun 5, 2026 at 11:30 AM."</em> Clean and informative.</p>
+      </div>
+    </div>
+
+    <!-- Issue 10 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">10</div>
+        <div class="issue-title">Delete confirmation looks like a normal button — dangerously easy to miss</div>
+        <span class="badge b-med">Medium</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>When you click the trash icon on a menu item, a "Confirm delete" button appears inline in the same actions row — same size, same location as normal buttons. On mobile it stretches full-width.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Deleting a menu item is permanent. Confirmation should feel like a moment of pause — visually distinct from normal actions. Right now it blends in. A rushed admin can accidentally confirm a delete.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>When delete is clicked, a full-width red banner slides open inside the menu item row</li>
+            <li>Clearly states the item name: <em>"Delete 'Matcha Latte'? This cannot be undone."</em></li>
+            <li>Two distinct buttons: red <strong>"Delete permanently"</strong> and grey <strong>"Cancel"</strong></li>
+            <li>Rest of row fades out — visually separated from normal state</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>A red-tinted banner slides into the row: <strong>"Delete 'Matcha Latte'? This cannot be undone."</strong> Hard to miss, hard to accidentally confirm, consequences clearly stated.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-label">NOFFELO Admin UX Review · June 2026</div>
+    <div class="pf-num">05</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PAGE 6 — LOW PRIORITY + ROADMAP
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-brand">
+      <div class="ph-brand-dot"></div>
+      <span>NOFFELO — Admin UX Review</span>
+    </div>
+    <div class="ph-right">Chapter 04 — Low Priority</div>
+  </div>
+
+  <div class="page-content">
+    <div class="chapter-band">
+      <div class="cb-left">
+        <div class="cb-num">Chapter 04</div>
+        <div class="cb-title">Low Priority — Polish in Week 3–4</div>
+      </div>
+      <div class="cb-badge">3 Issues</div>
+    </div>
+
+    <!-- Issue 11 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">11</div>
+        <div class="issue-title">On mobile, the sidebar takes over the top of the screen before any content</div>
+        <span class="badge b-low">Low</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>On a phone, the sidebar (logo + 4 nav links + logout) renders as a tall vertical block. You must scroll past all of it before seeing the actual dashboard content.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>Admins checking orders during a busy shift on their phone waste time scrolling past navigation every single visit. Every major mobile admin app (Shopify, Square) has solved this.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>On mobile: sidebar becomes a <strong>bottom tab bar</strong> pinned to the screen bottom</li>
+            <li>Slim top strip shows only logo + logout icon</li>
+            <li>Content starts immediately below — no nav scrolling</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Phone shows: slim top bar → content fills the screen → 4 tab icons pinned at the bottom. Active tab highlighted in green. Identical to how Shopify's mobile admin works.</p>
+      </div>
+    </div>
+
+    <!-- Issue 12 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">12</div>
+        <div class="issue-title">Empty tables still render column headers — looks like a broken state</div>
+        <span class="badge b-low">Low</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>When a search returns no results, the table still renders with its column headers (Guest, Visit, Contact, Status) — and then nothing below them. Then a plain text "No reservations match this view." appears below.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>A table with headers but no rows looks like data failed to load. Every admin's instinct is to refresh, even when the result is intentionally empty.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>When results are zero: hide the table entirely</li>
+            <li>Show a centered empty state with a relevant icon and helpful message</li>
+            <li>If search is active: "No orders match your search. Try clearing the filter."</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Search with no results: a centered box with a subtle icon and <strong>"No orders match 'oat latte'."</strong> Clean, intentional — not a broken-looking empty table.</p>
+      </div>
+    </div>
+
+    <!-- Issue 13 -->
+    <div class="issue-card">
+      <div class="issue-card-head">
+        <div class="issue-num">13</div>
+        <div class="issue-title">Add Item form has 10+ flat fields — required and optional look the same</div>
+        <span class="badge b-low">Low</span>
+      </div>
+      <div class="issue-body">
+        <div class="issue-col">
+          <div class="ic-label ic-prob">The Problem</div>
+          <p>All fields — name, category, price, image URL, alt text, tags, sort order, checkboxes — sit in a flat 4-column grid. Required fields look identical to rarely-touched optional ones.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-why">Why It Hurts</div>
+          <p>"Sort order" (touched maybe twice a year) competes visually with "Name" (filled every time you add an item). The form feels heavier than it needs to be.</p>
+        </div>
+        <div class="issue-col">
+          <div class="ic-label ic-fix">The Fix</div>
+          <ul>
+            <li>Split into two groups: <strong>"Core details"</strong> (name, category, price, description) and <strong>"Optional"</strong> (image, tags, sort order, flags)</li>
+            <li>A subtle divider + label separates the two groups</li>
+            <li>Required fields get a small asterisk marker</li>
+          </ul>
+        </div>
+      </div>
+      <div class="after-box">
+        <div class="after-label">What it looks like after the fix</div>
+        <p>Form shows "Core details" (4 fields admin always fills) → divider → "Optional extras" (image, tags, sort order). Faster to complete. Important fields at top, nice-to-haves below.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-label">NOFFELO Admin UX Review · June 2026</div>
+    <div class="pf-num">06</div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     PAGE 7 — 4-WEEK ROADMAP
+════════════════════════════════════════════════ -->
+<div class="page">
+  <div class="page-header">
+    <div class="ph-brand">
+      <div class="ph-brand-dot"></div>
+      <span>NOFFELO — Admin UX Review</span>
+    </div>
+    <div class="ph-right">Chapter 05 — Build Plan</div>
+  </div>
+
+  <div class="page-content">
+    <div class="chapter-band">
+      <div class="cb-left">
+        <div class="cb-num">Chapter 05</div>
+        <div class="cb-title">4-Week Build Roadmap</div>
+      </div>
+      <div class="cb-badge">Developer Handoff</div>
+    </div>
+
+    <p class="section-desc" style="margin-bottom:24px;">
+      Each week is a self-contained sprint. Share this directly with your developer —
+      they can start without any additional briefing beyond what is written on each card.
+    </p>
+
+    <div class="roadmap-grid">
+      <div class="rcard">
+        <div class="rcard-head">
+          <strong>Week 1 — Quick Wins</strong>
+          <span class="rcard-week">4 Changes</span>
+        </div>
+        <div class="rcard-body">
+          <div class="ritem">
+            <div class="rdot d-red"></div>
+            <p><strong>Issue #2</strong> — Replace single notice bar with a toast notification stack (top-right, 4-second auto-dismiss)</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-amber"></div>
+            <p><strong>Issue #3</strong> — Color-code "new" rows with amber left border; dim completed/cancelled rows</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-amber"></div>
+            <p><strong>Issue #4</strong> — Fix metric grid from 4-column to 3-column; add urgency coloring when pending count &gt; 0</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-amber"></div>
+            <p><strong>Issue #5</strong> — Collapse "Add Item" form behind a toggle button in the section header</p>
+          </div>
+        </div>
+        <div class="rcard-footer">Biggest daily UX lift per developer hour — all CSS + minor JSX</div>
+      </div>
+
+      <div class="rcard">
+        <div class="rcard-head">
+          <strong>Week 2 — Navigation &amp; Scale</strong>
+          <span class="rcard-week">4 Changes</span>
+        </div>
+        <div class="rcard-body">
+          <div class="ritem">
+            <div class="rdot d-amber"></div>
+            <p><strong>Issue #6</strong> — Add sidebar active state (IntersectionObserver) + pending count badges on nav links</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-green"></div>
+            <p><strong>Issue #7</strong> — Sortable column headers on Reservations and Orders tables (client-side, no API change)</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-green"></div>
+            <p><strong>Issue #8</strong> — Pagination for Orders table — copy exact logic from Reservations section</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-green"></div>
+            <p><strong>Issue #10</strong> — Delete confirmation as a full-width red banner overlay inside the row</p>
+          </div>
+        </div>
+        <div class="rcard-footer">Navigation clarity + safety as data volume grows over time</div>
+      </div>
+
+      <div class="rcard">
+        <div class="rcard-head">
+          <strong>Week 3 — Live Awareness</strong>
+          <span class="rcard-week">3 Changes</span>
+        </div>
+        <div class="rcard-body">
+          <div class="ritem">
+            <div class="rdot d-red"></div>
+            <p><strong>Issue #1</strong> — 60-second background polling; green badge on sidebar when new orders arrive; "Updated Xs ago" timestamp near Refresh</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-green"></div>
+            <p><strong>Issue #9</strong> — Shorten status history to "→ confirmed · 2h ago" with hover tooltip for full detail</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-grey"></div>
+            <p>Bonus: Add shimmer skeleton rows while data is loading instead of the single top-level spinner</p>
+          </div>
+        </div>
+        <div class="rcard-footer">Real-time cafe operations — fewer missed orders during rush hours</div>
+      </div>
+
+      <div class="rcard">
+        <div class="rcard-head">
+          <strong>Week 4 — Polish &amp; Mobile</strong>
+          <span class="rcard-week">3 Changes</span>
+        </div>
+        <div class="rcard-body">
+          <div class="ritem">
+            <div class="rdot d-grey"></div>
+            <p><strong>Issue #11</strong> — Mobile bottom tab bar navigation; slim top strip for logo + logout only</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-grey"></div>
+            <p><strong>Issue #12</strong> — Friendly empty states with icon and contextual message — hide table headers when results are zero</p>
+          </div>
+          <div class="ritem">
+            <div class="rdot d-grey"></div>
+            <p><strong>Issue #13</strong> — Group Add Item form into "Core details" and "Optional" sections with visual divider</p>
+          </div>
+        </div>
+        <div class="rcard-footer">Professional finish — works properly on phones and tablets</div>
+      </div>
+    </div>
+
+    <div class="dev-note">
+      <div class="dev-note-icon">★</div>
+      <div>
+        <h4>Note for the Developer</h4>
+        <p>
+          Every fix in this document works within the existing codebase.
+          <strong>No new libraries, no backend changes, no database updates required.</strong>
+          All changes are contained in <strong>AdminDashboard.jsx</strong> and <strong>styles.css</strong>.
+          The existing color system (moss green, amber/brass, cream, ink) is already defined as CSS variables
+          and must be reused throughout — do not introduce new colors. All existing functionality —
+          status updates, form submissions, search, filtering, pagination — stays 100% intact.
+          These are improvements layered on top of what already works.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    <div class="pf-label">NOFFELO Admin UX Review · June 2026</div>
+    <div class="pf-num">07</div>
+  </div>
+</div>
+
+</body>
+</html>
