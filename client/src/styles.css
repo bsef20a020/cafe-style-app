@@ -2014,7 +2014,8 @@ a.history-item:hover {
   color: rgba(32, 35, 31, 0.72);
 }
 
-.admin-sidebar nav a:hover {
+.admin-sidebar nav a:hover,
+.admin-sidebar nav a.active {
   color: var(--ink);
   background: rgba(83, 107, 82, 0.12);
 }
@@ -2156,9 +2157,10 @@ a.history-item:hover {
   background: rgba(184, 111, 82, 0.12);
 }
 
+/* Issue #4 — 3-column grid */
 .metric-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
@@ -2182,6 +2184,15 @@ a.history-item:hover {
 
 .metric-card strong {
   font-size: 2rem;
+}
+
+/* Issue #4 — urgent metric card */
+.metric-urgent {
+  border-left: 3px solid var(--brass);
+}
+
+.metric-urgent strong {
+  color: #7a5010;
 }
 
 .admin-section {
@@ -2600,6 +2611,87 @@ td span {
   color: rgba(32, 35, 31, 0.62);
 }
 
+/* Issue #3 — status row coloring */
+tr.status-row-new {
+  background: rgba(182, 145, 85, 0.06);
+  box-shadow: inset 3px 0 0 var(--brass);
+}
+
+tr.status-row-completed,
+tr.status-row-cancelled {
+  opacity: 0.62;
+}
+
+/* Issue #10 — delete confirmation banner */
+.delete-confirm-bar {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(184, 111, 82, 0.4);
+  background: rgba(255, 235, 228, 0.95);
+  color: #8a2d1f;
+  font-size: 0.88rem;
+  font-weight: 760;
+  animation: toast-slide-in 160ms ease;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* Issue #12 — upgraded empty state */
+.empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 40px 20px;
+  border: 1px dashed rgba(83, 107, 82, 0.22);
+  border-radius: 8px;
+  background: rgba(219, 228, 209, 0.22);
+  color: rgba(32, 35, 31, 0.45);
+  text-align: center;
+}
+
+.empty-state p {
+  margin: 0;
+  font-size: 0.9rem;
+  max-width: 360px;
+}
+
+/* Issue #13 — form group label divider */
+.form-group-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 0.74rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(32, 35, 31, 0.48);
+  border-top: 1px solid var(--line);
+}
+
+.form-group-label:first-child {
+  padding-top: 0;
+  margin-top: 0;
+  border-top: 0;
+}
+
+/* Issue #11 — mobile top bar (hidden on desktop) */
+.admin-mobile-topbar {
+  display: none;
+}
+
 @media (max-width: 980px) {
   .hero,
   .story-section,
@@ -2662,10 +2754,61 @@ td span {
     min-height: 360px;
   }
 
+  /* Issue #11 — sidebar becomes bottom tab bar on mobile */
   .admin-sidebar {
-    position: static;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
     height: auto;
-    grid-template-columns: 1fr;
+    z-index: 50;
+    flex-direction: row;
+    align-items: stretch;
+    padding: 0;
+    gap: 0;
+    border-right: 0;
+    border-top: 1px solid var(--line);
+    background: var(--cream);
+  }
+
+  .admin-sidebar .brand-mark,
+  .admin-sidebar > .button.ghost {
+    display: none;
+  }
+
+  .admin-sidebar nav {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 0;
+  }
+
+  .admin-sidebar nav a {
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 8px 4px;
+    border-radius: 0;
+    font-size: 0.62rem;
+    font-weight: 760;
+    min-height: 58px;
+  }
+
+  .admin-mobile-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--cream);
+    margin: -20px -20px 20px;
+  }
+
+  .admin-content {
+    padding-bottom: 80px;
   }
 
   .admin-toolbar {
