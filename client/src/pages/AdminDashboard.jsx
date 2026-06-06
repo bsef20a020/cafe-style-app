@@ -115,7 +115,21 @@ function AdminDashboard() {
   const [editForm, setEditForm] = useState(emptyMenuForm);
   const [editingItemId, setEditingItemId] = useState("");
   const [confirmDeleteId, setConfirmDeleteId] = useState("");
-  const [notice, setNotice] = useState({ type: "idle", message: "" });
+  const [toasts, setToasts] = useState([]);
+  const toastId = useRef(0);
+
+  // Backward-compat shim — all existing setNotice({ type, message }) calls work unchanged.
+  // "idle" resets become no-ops; success/error calls push a self-dismissing toast.
+  function setNotice({ type, message }) {
+    if (type === "idle") return;
+    const id = ++toastId.current;
+    setToasts((prev) => [...prev, { id, type, message }]);
+    setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 4000);
+  }
+
+  function dismissToast(id) {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  }
   const [busy, setBusy] = useState({ reservationId: "", orderId: "", menuId: "", menuAction: "" });
   const [saving, setSaving] = useState(false);
   const [reservationSearch, setReservationSearch] = useState("");
@@ -495,12 +509,6 @@ function AdminDashboard() {
           </div>
         </div>
 
-        {notice.message ? (
-          <div className={`admin-notice ${notice.type}`} role={notice.type === "error" ? "alert" : "status"} aria-live="polite">
-            {notice.type === "error" ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
-            <span>{notice.message}</span>
-          </div>
-        ) : null}
 
         {state.loading ? (
           <div className="loading-row">
@@ -869,6 +877,22 @@ function AdminDashboard() {
         </section>
       </section>
       <AdminChatWidget />
+
+      <div className="toast-stack" aria-live="polite">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={`toast toast-${toast.type}`}
+            role={toast.type === "error" ? "alert" : "status"}
+          >
+            {toast.type === "error" ? <AlertCircle size={16} /> : <CheckCircle2 size={16} />}
+            <span>{toast.message}</span>
+            <button className="toast-dismiss" onClick={() => dismissToast(toast.id)} aria-label="Dismiss notification">
+              <X size={14} />
+            </button>
+          </div>
+        ))}
+      </div>
     </main>
   );
 }
