@@ -2195,6 +2195,132 @@ a.history-item:hover {
   color: #7a5010;
 }
 
+/* Sales summary + activity feed overview panels */
+.overview-panels {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.panel-card {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--cream);
+  box-shadow: 0 14px 34px rgba(39, 42, 35, 0.07);
+  padding: 18px;
+}
+
+.panel-card-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  color: var(--moss);
+}
+
+.panel-card-head h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--ink);
+}
+
+.sales-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.sales-stat {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid rgba(32, 35, 31, 0.08);
+  border-radius: 8px;
+  background: #fffdf7;
+}
+
+.sales-stat span {
+  color: rgba(32, 35, 31, 0.6);
+  font-size: 0.82rem;
+}
+
+.sales-stat strong {
+  font-size: 1.4rem;
+  color: var(--ink);
+}
+
+.sales-stat .sales-top {
+  font-size: 1.05rem;
+  line-height: 1.25;
+}
+
+.sales-stat small {
+  color: rgba(32, 35, 31, 0.5);
+  font-size: 0.76rem;
+}
+
+.activity-feed {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+  max-height: 232px;
+  overflow-y: auto;
+}
+
+.activity-feed li {
+  display: grid;
+  grid-template-columns: 14px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px solid rgba(32, 35, 31, 0.06);
+}
+
+.activity-feed li:last-child {
+  border-bottom: 0;
+}
+
+.activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--moss);
+}
+
+.activity-good .activity-dot { background: #3f8f5a; }
+.activity-bad .activity-dot { background: #c0563f; }
+.activity-info .activity-dot { background: var(--brass); }
+
+.activity-text {
+  font-size: 0.88rem;
+  color: var(--ink);
+}
+
+.activity-time {
+  font-size: 0.76rem;
+  color: rgba(32, 35, 31, 0.5);
+  white-space: nowrap;
+}
+
+.activity-empty {
+  color: rgba(32, 35, 31, 0.55);
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+.export-button {
+  white-space: nowrap;
+}
+
+@media (max-width: 860px) {
+  .overview-panels {
+    grid-template-columns: 1fr;
+  }
+}
+
 .admin-section {
   margin-top: 18px;
   padding: 18px;
@@ -2261,7 +2387,30 @@ a.history-item:hover {
 table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 760px;
+  min-width: 860px;
+}
+
+/* Table dropdowns must never truncate their label (unpaid / preparing / cancelled) */
+td select {
+  width: 100%;
+  min-width: 138px;
+  min-height: 42px;
+  padding: 9px 30px 9px 12px;
+  font-size: 0.9rem;
+  text-overflow: ellipsis;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2320231f' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+/* Give the Payment & Status columns guaranteed breathing room */
+.orders-table th:nth-child(4),
+.orders-table td:nth-child(4),
+.orders-table th:nth-child(5),
+.orders-table td:nth-child(5) {
+  min-width: 152px;
 }
 
 th,

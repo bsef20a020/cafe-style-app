@@ -8,6 +8,7 @@ import {
   Edit3,
   ChevronLeft,
   ChevronRight,
+  Download,
   Loader2,
   LogOut,
   PackageCheck,
@@ -108,6 +109,63 @@ function formatRelative(date) {
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
   return `${Math.floor(h / 24)}d ago`;
+}
+
+// Sales summary — money formatting
+function formatMoney(amount) {
+  return `PKR ${Number(amount || 0).toLocaleString("en-PK")}`;
+}
+
+// Live activity feed — turn a raw AnalyticsEvent into a readable line
+function describeEvent(event) {
+  const m = event.metadata || {};
+  switch (event.type) {
+    case "order_created":
+      return {
+        tone: "good",
+        text: `New order ${m.reference || ""} placed${m.total ? ` · ${formatMoney(m.total)}` : ""}`
+      };
+    case "order_status_updated": {
+      const changes = (m.changes || [])
+        .map((c) => `${c.field === "paymentStatus" ? "payment" : "status"} → ${c.to}`)
+        .join(", ");
+      return { tone: "info", text: `Order ${m.reference || ""} ${changes || "updated"}` };
+    }
+    case "reservation_created":
+      return {
+        tone: "good",
+        text: `New reservation${m.guests ? ` for ${m.guests}` : ""}${m.date ? ` on ${m.date}` : ""}`
+      };
+    case "reservation_status_updated":
+      return { tone: "info", text: `Reservation ${m.reference || ""} → ${m.to}` };
+    case "reservation_cancelled":
+      return { tone: "bad", text: "A reservation was cancelled" };
+    case "reservation_modified":
+      return { tone: "info", text: "A reservation was modified" };
+    case "admin_login":
+      return { tone: "info", text: "Admin signed in" };
+    default:
+      return { tone: "info", text: String(event.type || "activity").replace(/_/g, " ") };
+  }
+}
+
+// CSV export helpers
+function toCsvValue(value) {
+  const text = value == null ? "" : String(value);
+  return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+}
+
+function downloadCsv(filename, headers, rows) {
+  const lines = [headers.map(toCsvValue).join(",")].concat(
+    rows.map((row) => row.map(toCsvValue).join(","))
+  );
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  link.click();
+  URL.revokeObjectURL(url);
 }
 
 // Issue #7 — sortable column header
@@ -224,14 +282,16 @@ function AdminDashboard() {
   useEffect(() => {
     const id = setInterval(async () => {
       try {
-        const [reservations, orders] = await Promise.all([
+        const [reservations, orders, analytics] = await Promise.all([
           api.getAdminReservations(),
-          api.getAdminOrders()
+          api.getAdminOrders(),
+          api.getAnalytics()
         ]);
         setState((current) => ({
           ...current,
           reservations: reservations.reservations || current.reservations,
-          orders: orders.orders || current.orders
+          orders: orders.orders || current.orders,
+          analytics: analytics || current.analytics
         }));
         setLastSynced(new Date());
       } catch {
@@ -282,6 +342,81 @@ function AdminDashboard() {
     }),
     [state.menu, state.orders, state.reservations]
   );
+
+  // Sales summary — revenue, average order value, top seller (cancelled excluded)
+  const salesSummary = useMemo(() => {
+    const counted = state.orders.filter((order) => order.status !== "cancelled");
+    const totalRevenue = counted.reduce((sum, order) => sum + (order.total || 0), 0);
+
+    const startToday = new Date();
+    startToday.setHours(0, 0, 0, 0);
+    const todayOrders = counted.filter(
+      (order) => order.createdAt && new Date(order.createdAt) >= startToday
+    );
+    const todayRevenue = todayOrders.reduce((sum, order) => sum + (order.total || 0), 0);
+
+    const itemCounts = {};
+    counted.forEach((order) =>
+      (order.items || []).forEach((item) => {
+        itemCounts[item.name] = (itemCounts[item.name] || 0) + (item.quantity || 0);
+      })
+    );
+    const top = Object.entries(itemCounts).sort((a, b) => b[1] - a[1])[0];
+
+    return {
+      totalRevenue,
+      todayRevenue,
+      todayCount: todayOrders.length,
+      avg: counted.length ? Math.round(totalRevenue / counted.length) : 0,
+      topItem: top ? { name: top[0], qty: top[1] } : null
+    };
+  }, [state.orders]);
+
+  // Live activity feed — meaningful events only (skip page views / generic tracking)
+  const activityTypes = new Set([
+    "order_created",
+    "order_status_updated",
+    "reservation_created",
+    "reservation_status_updated",
+    "reservation_cancelled",
+    "reservation_modified",
+    "admin_login"
+  ]);
+  const recentEvents = (state.analytics?.recentEvents || []).filter((event) =>
+    activityTypes.has(event.type)
+  );
+
+  // CSV export — uses the currently filtered rows so exports respect search/filter
+  function exportOrders() {
+    const headers = [
+      "Reference", "Customer", "Phone", "Items", "Total", "Currency",
+      "Fulfillment", "Payment Method", "Payment Status", "Status", "Created"
+    ];
+    const rows = filteredOrders.map((order) => [
+      order.reference,
+      order.customer?.name,
+      order.customer?.phone,
+      (order.items || []).map((item) => `${item.quantity}x ${item.name}`).join("; "),
+      order.total,
+      order.currency || "PKR",
+      order.fulfillment?.type,
+      order.paymentMethod,
+      order.paymentStatus,
+      order.status,
+      order.createdAt ? new Date(order.createdAt).toLocaleString() : ""
+    ]);
+    downloadCsv(`orders-${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+    setNotice({ type: "success", message: `Exported ${rows.length} orders to CSV` });
+  }
+
+  function exportReservations() {
+    const headers = ["Reference", "Guest", "Phone", "Date", "Time", "Guests", "Occasion", "Status"];
+    const rows = filteredReservations.map((r) => [
+      r.reference, r.name, r.phone, r.date, r.time, r.guests, r.occasion, r.status
+    ]);
+    downloadCsv(`reservations-${new Date().toISOString().slice(0, 10)}.csv`, headers, rows);
+    setNotice({ type: "success", message: `Exported ${rows.length} reservations to CSV` });
+  }
 
   // Issue #7 — reservations with sort
   const filteredReservations = useMemo(() => {
@@ -621,6 +756,65 @@ function AdminDashboard() {
           <Metric label="Available" value={metrics.availableMenuItems} />
         </div>
 
+        {/* Sales summary + live activity feed */}
+        {!state.loading && (
+          <div className="overview-panels">
+            <div className="panel-card">
+              <div className="panel-card-head">
+                <BarChart3 size={16} aria-hidden="true" />
+                <h3>Sales summary</h3>
+              </div>
+              <div className="sales-grid">
+                <div className="sales-stat">
+                  <span>Today&apos;s revenue</span>
+                  <strong>{formatMoney(salesSummary.todayRevenue)}</strong>
+                  <small>{salesSummary.todayCount} orders today</small>
+                </div>
+                <div className="sales-stat">
+                  <span>Total revenue</span>
+                  <strong>{formatMoney(salesSummary.totalRevenue)}</strong>
+                  <small>cancelled excluded</small>
+                </div>
+                <div className="sales-stat">
+                  <span>Avg order value</span>
+                  <strong>{formatMoney(salesSummary.avg)}</strong>
+                  <small>per order</small>
+                </div>
+                <div className="sales-stat">
+                  <span>Top seller</span>
+                  <strong className="sales-top">{salesSummary.topItem ? salesSummary.topItem.name : "—"}</strong>
+                  <small>{salesSummary.topItem ? `${salesSummary.topItem.qty} sold` : "no sales yet"}</small>
+                </div>
+              </div>
+            </div>
+
+            <div className="panel-card">
+              <div className="panel-card-head">
+                <Clock size={16} aria-hidden="true" />
+                <h3>Recent activity</h3>
+              </div>
+              {recentEvents.length > 0 ? (
+                <ul className="activity-feed">
+                  {recentEvents.map((event) => {
+                    const detail = describeEvent(event);
+                    return (
+                      <li key={event._id} className={`activity-${detail.tone}`}>
+                        <span className="activity-dot" aria-hidden="true" />
+                        <span className="activity-text">{detail.text}</span>
+                        <span className="activity-time">
+                          {event.createdAt ? formatRelative(new Date(event.createdAt)) : ""}
+                        </span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <p className="activity-empty">No recent activity yet.</p>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* ── RESERVATIONS ─────────────────────────────── */}
         <section className="admin-section" id="reservations">
           <div className="section-heading compact-heading">
@@ -650,6 +844,16 @@ function AdminDashboard() {
               ))}
             </select>
             <span className="admin-result-count">{filteredReservations.length} reservations</span>
+            <button
+              className="button compact-button export-button"
+              type="button"
+              onClick={exportReservations}
+              disabled={filteredReservations.length === 0}
+              title="Download visible reservations as CSV"
+            >
+              <Download size={15} />
+              Export CSV
+            </button>
           </div>
 
           {/* Issue #12 — hide table when empty */}
@@ -771,12 +975,22 @@ function AdminDashboard() {
               ))}
             </select>
             <span className="admin-result-count">{filteredOrders.length} orders</span>
+            <button
+              className="button compact-button export-button"
+              type="button"
+              onClick={exportOrders}
+              disabled={filteredOrders.length === 0}
+              title="Download visible orders as CSV"
+            >
+              <Download size={15} />
+              Export CSV
+            </button>
           </div>
 
           {/* Issue #12 — hide table when empty */}
           {visibleOrders.length > 0 ? (
             <div className="table-wrap">
-              <table>
+              <table className="orders-table">
                 <thead>
                   <tr>
                     {/* Issue #7 — sortable headers */}
